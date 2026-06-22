@@ -1,13 +1,14 @@
 interface LoadingProps {
-  size: "small" | "medium" | "large";
+  size: "small" | "medium" | "large" | 'xl';
   color: string;
 }
 
-const LoadingSpinner = ({ size, color }: LoadingProps) => {
+const LoadingSpinner = ({ size, color = '000000' }: LoadingProps) => {
   const sizeClasses: Record<LoadingProps["size"], string> = {
     small: "h-6 w-6 border-2",
     medium: "h-10 w-10 border-3",
     large: "h-16 w-16 border-4",
+    xl: "h-24 w-24 border-5"
   };
 
   return (
