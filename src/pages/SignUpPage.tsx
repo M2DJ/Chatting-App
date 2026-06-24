@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import X from '../assets/X-Logo.png';
-import Facebook from '../assets/Facebook-Logo.png';
-import Google from '../assets/Google-Logo.webp';
-
+import X from "../assets/X-Logo.png";
+import Facebook from "../assets/Facebook-Logo.png";
+import Google from "../assets/Google-Logo.webp";
+import { authService } from "../services/AuthService";
+import LoadingSpinner from "../components/LoadingSpinner";
+import type { ReactFormState } from "react-dom/client";
 
 const SignUpPage = () => {
   {
@@ -18,6 +20,17 @@ const SignUpPage = () => {
   }
   const [isOpening, setIsOpening] = useState(false);
 
+  {
+    /*
+    State for form submition  
+  */
+  }
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +41,33 @@ const SignUpPage = () => {
       window.removeEventListener("resize", () => setWidth(window.innerWidth));
     };
   }, []);
+
+  const handleFormSubmition = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      setIsLoading(true);
+      if (confirmPassword == password) {
+        const { success, error } = await authService.signUpWithEmail(
+          email,
+          password,
+        );
+
+        if (success) {
+          setIsLoading(false);
+          navigate("/chat");
+        } else {
+          setError("Failed to Sign Up, Please Try agian");
+        }
+      } else {
+        setError("Passwords do not match");
+      }
+    } catch (e) {
+      console.error("Error signing up: ", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (width <= 450) {
     return (
@@ -50,22 +90,44 @@ const SignUpPage = () => {
             Form element
 
           */}
-            <form className="mb-3">
+            <form className="mb-3" onSubmit={handleFormSubmition}>
               <label className="text-[clamp(16px,1.5vw,90px)]">Email</label>
               <br />
-              <input className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-1" />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-1"
+              />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
-              <input className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-1" />
-              <label className="text-[clamp(16px,1.5vw,90px)]">Confirm Password</label>
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-1"
+                type="password"
+              />
+              <label className="text-[clamp(16px,1.5vw,90px)]">
+                Confirm Password
+              </label>
               <br />
-              <input className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-5" />
+              <input
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-5"
+                type="password"
+              />
 
               <div className="flex justify-center">
-                <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                  Sign Up
+                <button className="cursor-pointer flex justify-center items-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                  {isLoading ? (
+                    <LoadingSpinner size="small" color="#FFFFFF" />
+                  ) : (
+                    "Sign Up"
+                  )}
                 </button>
               </div>
+              {error && (
+                <p className="text-red-500 text-lg flex justify-center">
+                  {error}
+                </p>
+              )}
             </form>
 
             {/*
@@ -141,22 +203,44 @@ const SignUpPage = () => {
             Form element
 
           */}
-            <form className="mb-3">
+            <form className="mb-3" onSubmit={handleFormSubmition}>
               <label className="text-[clamp(16px,1.5vw,90px)]">Email</label>
               <br />
-              <input className="h-[4vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-1" />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-[4vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-1"
+              />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
-              <input className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-1" />
-              <label className="text-[clamp(16px,1.5vw,90px)]">Confirm Password</label>
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-1"
+                type="password"
+              />
+              <label className="text-[clamp(16px,1.5vw,90px)]">
+                Confirm Password
+              </label>
               <br />
-              <input className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-5" />
+              <input
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-5"
+                type="password"
+              />
 
               <div className="flex justify-center">
-                <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                  Sign Up
+                <button className="cursor-pointer flex justify-center items-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                  {isLoading ? (
+                    <LoadingSpinner size="medium" color="border-[#fffff9]" />
+                  ) : (
+                    "Sign Up"
+                  )}
                 </button>
               </div>
+              {error && (
+                <p className="text-red-500 text-lg flex justify-center">
+                  {error}
+                </p>
+              )}
             </form>
 
             {/*
@@ -212,6 +296,6 @@ const SignUpPage = () => {
       </div>
     );
   }
-}
+};
 
-export default SignUpPage
+export default SignUpPage;

@@ -1,4 +1,3 @@
-import { UNSAFE_ErrorResponseImpl } from "react-router-dom";
 import { supabase } from "./SupabaseClient";
 
 class SupabaseAuthService {

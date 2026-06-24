@@ -1,11 +1,11 @@
 interface LoadingProps {
   size: "small" | "medium" | "large" | "xl";
-  color?: string;
+  color: string;
 }
 
 const LoadingSpinner = ({
   size = "medium",
-  color = "000000",
+  color = 'border-black',
 }: LoadingProps) => {
   const sizeClasses: Record<LoadingProps["size"], string> = {
     small: "h-6 w-6 border-2",
@@ -16,7 +16,7 @@ const LoadingSpinner = ({
 
   return (
     <div
-      className={`${sizeClasses[size]} border-[#${color}] border-r-transparent rounded-full animate-spin [animation-timing-function:ease-in-out]`}
+      className={`${sizeClasses[size]} ${color} border-r-transparent rounded-full animate-spin [animation-timing-function:ease-in-out]`}
     />
   );
 };
