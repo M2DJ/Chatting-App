@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Facebook from "../assets/Facebook-Logo.png";
 import Google from "../assets/Google-Logo.webp";
 import X from "../assets/X-Logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   {
