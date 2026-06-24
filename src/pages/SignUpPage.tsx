@@ -5,7 +5,6 @@ import Facebook from "../assets/Facebook-Logo.png";
 import Google from "../assets/Google-Logo.webp";
 import { authService } from "../services/AuthService";
 import LoadingSpinner from "../components/LoadingSpinner";
-import type { ReactFormState } from "react-dom/client";
 
 const SignUpPage = () => {
   {
@@ -48,7 +47,7 @@ const SignUpPage = () => {
     try {
       setIsLoading(true);
       if (confirmPassword == password) {
-        const { success, error } = await authService.signUpWithEmail(
+        const { success } = await authService.signUpWithEmail(
           email,
           password,
         );
