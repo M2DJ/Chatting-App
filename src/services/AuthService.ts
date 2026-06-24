@@ -45,6 +45,8 @@ class SupabaseAuthService {
         return { success: false, data: null, error: e.message};
     }
   }
+
+//   async sendPasswordResetEmail(email: string)
 }
 
 export const authService = new SupabaseAuthService();
