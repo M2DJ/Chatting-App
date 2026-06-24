@@ -58,7 +58,14 @@ const LoginPage = () => {
               <input className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4" />
 
               <div className="flex justify-end mb-8">
-                <button className="cursor-pointer text-[clamp(16px,1.5vw,90px)]">
+                <button
+                  className="cursor-pointer text-[clamp(16px,1.5vw,90px)]"
+                  onClick={() => {
+                    setIsOpening(false);
+
+                    setTimeout(() => navigate("/forgotpassword"), 500);
+                  }}
+                >
                   Forgot Password?
                 </button>
               </div>
@@ -152,7 +159,14 @@ const LoginPage = () => {
               <input className="h-[5vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4" />
 
               <div className="flex justify-end mb-8">
-                <button className="cursor-pointer text-[clamp(16px,1.5vw,90px)]">
+                <button
+                  className="cursor-pointer text-[clamp(16px,1.5vw,90px)]"
+                  onClick={() => {
+                    setIsOpening(false);
+
+                    setTimeout(() => navigate("/forgotpassword"), 500);
+                  }}
+                >
                   Forgot Password?
                 </button>
               </div>
