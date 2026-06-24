@@ -2,23 +2,39 @@ import { useEffect, useState } from "react";
 import Facebook from "../assets/Facebook-Logo.png";
 import Google from "../assets/Google-Logo.webp";
 import X from "../assets/X-Logo.png";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  {
+    /* State for the width of the screen */
+  }
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
 
+  {
+    /* State for the from animation */
+  }
+  const [isOpening, setIsOpening] = useState(false);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
+    setIsOpening(true);
     window.addEventListener("resize", () => setWidth(window.innerWidth));
 
-    return () =>
+    return () => {
       window.removeEventListener("resize", () => setWidth(window.innerWidth));
-  });
+    };
+  }, []);
 
-  if (width <= 425) {
-    return <div className="h-screen bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+  if (width <= 450) {
+    return (
+      <div className="h-screen bg-linear-[90deg,#ffffff_0%,#999999_87%]">
         <div className="h-full flex justify-center items-center">
-          <div className="w-[90%] min-w-70 py-5 px-3 bg-white rounded-lg shadow-lg font-lalezar">
+          <div
+            className={`w-[90%] min-w-70 py-5 px-3 bg-white rounded-lg shadow-lg font-lalezar transition-all duration-500 ease-out ${isOpening ? "scale-100 opacity-100 blur-0" : "scale-90 opacity-30 blur-md"}`}
+          >
             {/* 
 
             Header of the form
@@ -61,7 +77,16 @@ const LoginPage = () => {
           */}
             <div className="flex justify-center mb-2 font-inter text-[clamp(16px,1vw,100px)]">
               <p className="mr-1">Don't have an account?</p>
-              <button className="cursor-pointer text-blue-700">Sign up</button>
+              <button
+                className="cursor-pointer text-blue-700"
+                onClick={() => {
+                  setIsOpening(false);
+
+                  setTimeout(() => navigate("/signup"), 500);
+                }}
+              >
+                Sign Up
+              </button>
             </div>
 
             {/*
@@ -95,12 +120,15 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
-      </div>;
+      </div>
+    );
   } else {
     return (
       <div className="h-screen bg-linear-[90deg,#ffffff_0%,#999999_87%]">
         <div className="h-full flex justify-center items-center">
-          <div className="w-[40%] min-w-90 py-5 px-3 bg-white rounded-lg shadow-lg font-lalezar">
+          <div
+            className={`w-[40%] min-w-90 py-5 px-3 bg-white rounded-lg shadow-lg font-lalezar transition-all duration-500 ease-out ${isOpening ? "scale-100 opacity-100 blur-0" : "scale-90 opacity-30 blur-md"}`}
+          >
             {/* 
 
             Header of the form
@@ -143,7 +171,16 @@ const LoginPage = () => {
           */}
             <div className="flex justify-center mb-2 font-inter text-[clamp(16px,1vw,100px)]">
               <p className="mr-1">Don't have an account?</p>
-              <button className="cursor-pointer text-blue-700">Sign up</button>
+              <button
+                className="cursor-pointer text-blue-700"
+                onClick={() => {
+                  setIsOpening(false);
+
+                  setTimeout(() => navigate("/signup"), 500);
+                }}
+              >
+                Signup
+              </button>
             </div>
 
             {/*
@@ -161,17 +198,17 @@ const LoginPage = () => {
 
             <div className="flex justify-around items-center">
               <div
-                className="w-[6vw] h-[6vw] min-w-15 min-h-15 border rounded-full shadow-[0_4px_12px_0_#00000075] bg-[length:60%] bg-center bg-no-repeat"
+                className="cursor-pointer w-[6vw] h-[6vw] min-w-15 min-h-15 border rounded-full shadow-[0_4px_12px_0_#00000075] bg-[length:60%] bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${X})` }}
               />
 
               <div
-                className="w-[6vw] h-[6vw] min-w-15 min-h-15 border rounded-full shadow-[0_4px_12px_0_#00000075] bg-[length:120%] bg-center bg-no-repeat"
+                className="cursor-pointer w-[6vw] h-[6vw] min-w-15 min-h-15 border rounded-full shadow-[0_4px_12px_0_#00000075] bg-[length:120%] bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${Facebook})` }}
               />
 
               <div
-                className="w-[6vw] h-[6vw] min-w-15 min-h-15 border rounded-full shadow-[0_4px_12px_0_#00000075] bg-contain"
+                className="cursor-pointer w-[6vw] h-[6vw] min-w-15 min-h-15 border rounded-full shadow-[0_4px_12px_0_#00000075] bg-contain"
                 style={{ backgroundImage: `url(${Google})` }}
               />
             </div>
