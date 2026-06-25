@@ -3,6 +3,8 @@ import Facebook from "../assets/Facebook-Logo.png";
 import Google from "../assets/Google-Logo.webp";
 import X from "../assets/X-Logo.png";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../services/AuthService";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const LoginPage = () => {
   {
@@ -17,6 +19,14 @@ const LoginPage = () => {
   }
   const [isOpening, setIsOpening] = useState(false);
 
+  {
+    /* State for form submition */
+  }
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +37,29 @@ const LoginPage = () => {
       window.removeEventListener("resize", () => setWidth(window.innerWidth));
     };
   }, []);
+
+  const handleFormSubmition = async (e: any) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+
+      const { success, error } = await authService.loginWithEmail(
+        email,
+        password,
+      );
+
+      if (success) {
+        navigate("/chat");
+      } else {
+        setError(`Error logging in: ${error}`);
+      }
+    } catch (e) {
+      console.log("Error logging in: ", e);
+      setError(`Error logging in: ${e}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (width <= 450) {
     return (
@@ -49,13 +82,21 @@ const LoginPage = () => {
             Form element
 
           */}
-            <form className="mb-3">
+            <form className="mb-3" onSubmit={handleFormSubmition}>
               <label className="text-[clamp(16px,1.5vw,90px)]">Email</label>
               <br />
-              <input className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4" />
+              <input
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+              />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
-              <input className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4" />
+              <input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4"
+              />
 
               <div className="flex justify-end mb-8">
                 <button
@@ -72,9 +113,20 @@ const LoginPage = () => {
 
               <div className="flex justify-center">
                 <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                  Login
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <LoadingSpinner size="medium" color="border-[#ffffff]" />
+                    </div>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </div>
+              {error && (
+                <p className="mt-1 text-red-500 text-lg flex justify-center">
+                  {error}
+                </p>
+              )}
             </form>
 
             {/*
@@ -150,13 +202,21 @@ const LoginPage = () => {
             Form element
 
           */}
-            <form className="mb-3">
+            <form className="mb-3" onSubmit={handleFormSubmition}>
               <label className="text-[clamp(16px,1.5vw,90px)]">Email</label>
               <br />
-              <input className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4" />
+              <input
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+              />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
-              <input className="h-[5vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4" />
+              <input
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-[5vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4"
+              />
 
               <div className="flex justify-end mb-8">
                 <button
@@ -173,9 +233,20 @@ const LoginPage = () => {
 
               <div className="flex justify-center">
                 <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                  Login
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <LoadingSpinner size="medium" color="border-[#ffffff]" />
+                    </div>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </div>
+              {error && (
+                <p className="mt-1 text-red-500 text-lg flex justify-center">
+                  {error}
+                </p>
+              )}
             </form>
 
             {/*
