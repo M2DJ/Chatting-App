@@ -112,7 +112,7 @@ const LoginPage = () => {
               </div>
 
               <div className="flex justify-center">
-                <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                <button type="submit" className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
                   {isLoading ? (
                     <div className="flex justify-center items-center">
                       <LoadingSpinner size="medium" color="border-[#ffffff]" />
@@ -232,7 +232,7 @@ const LoginPage = () => {
               </div>
 
               <div className="flex justify-center">
-                <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                <button type="submit" className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
                   {isLoading ? (
                     <div className="flex justify-center items-center">
                       <LoadingSpinner size="medium" color="border-[#ffffff]" />
