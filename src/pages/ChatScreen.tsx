@@ -3,6 +3,7 @@ import NightMode from "../assets/Toggle-Night.jpg";
 import Search from "../assets/Search-Icon.jpg";
 import { useEffect, useState } from "react";
 import ChatScreenMobile from "./ChatScreenMobile";
+import ChatCard from "../components/ChatCard";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
@@ -61,7 +62,7 @@ const ChatScreen = () => {
             Chat Search Bar
             
             */}
-            <div className="relative">
+            <div className="relative mb-9">
               <input
                 placeholder="Search chat"
                 type="text"
@@ -72,6 +73,13 @@ const ChatScreen = () => {
                 className="w-[1.5vw] h-[1.5vw] min-w-5 min-h-5 absolute top-1/2 -translate-y-1/2 left-1"
               />
             </div>
+
+            {/*
+            
+            Chat Card
+            
+            */}
+            <ChatCard />
           </div>
         </div>
       </div>

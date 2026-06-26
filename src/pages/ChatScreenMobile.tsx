@@ -2,6 +2,7 @@ import PlaceHolderPerson from "../assets/Placeholder-Progile-Image.webp";
 import NightMode from "../assets/Toggle-Night.jpg";
 import Search from "../assets/Search-Icon.jpg";
 import { useEffect, useState } from "react";
+import ChatCard from "../components/ChatCard";
 
 const ChatScreenMobile = () => {
   const [width, setWidth] = useState(
@@ -57,7 +58,7 @@ const ChatScreenMobile = () => {
             Chat Search Bar
             
             */}
-          <div className="relative">
+          <div className="relative mb-5">
             <input
               placeholder="Search chat"
               type="text"
@@ -68,6 +69,13 @@ const ChatScreenMobile = () => {
               className="w-[1.5vw] h-[1.5vw] min-w-5 min-h-5 absolute top-1/2 -translate-y-1/2 left-1"
             />
           </div>
+
+          {/*
+          
+          Chat Cards
+          
+          */}
+          <ChatCard />
         </div>
       </div>
     </div>
