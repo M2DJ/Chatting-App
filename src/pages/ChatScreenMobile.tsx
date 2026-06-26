@@ -4,6 +4,9 @@ import Search from "../assets/Search-Icon.jpg";
 import Logout from "../assets/Logout-logo.jpg";
 import { useEffect, useRef, useState } from "react";
 import ChatCard from "../components/ChatCard";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { authService } from "../services/AuthService";
 
 const ChatScreenMobile = () => {
   const [width, setWidth] = useState(
@@ -11,8 +14,10 @@ const ChatScreenMobile = () => {
   );
 
   const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   //useEffect for the dropdown menu
   useEffect(() => {
@@ -40,6 +45,24 @@ const ChatScreenMobile = () => {
       window.removeEventListener("resize", () => setWidth(window.innerWidth));
     };
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoading(true);
+
+      const { success, error } = await authService.logout();
+
+      if (success) {
+        navigate("/login");
+      } else {
+        console.error("Error occured while logging out: ", error);
+      }
+    } catch (e) {
+      console.error("Error occured while logging out: ", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="h-screen font-inter px-[10px]">
@@ -78,12 +101,20 @@ const ChatScreenMobile = () => {
                   style={{ backgroundImage: `url(${PlaceHolderPerson})` }}
                 />
 
-                {isProfileSettingsOpen && (
-                  <div className="z-50 flex justify-start items-center mt-1 px-3 h-[40px] w-28 bg-white border border-black/40 rounded-xl shadow-lg absolute top-full right-0">
-                    <img src={Logout} />
-                    <p>Logout</p>
-                  </div>
-                )}
+                {isProfileSettingsOpen &&
+                  (isLoading ? (
+                    <div className="z-50 flex justify-start items-center mt-1 px-3 h-[40px] bg-white border border-black/40 rounded-xl shadow-lg absolute top-full right-0">
+                      <LoadingSpinner size="small" color="border-[#000000]" />
+                    </div>
+                  ) : (
+                    <div
+                      onClick={handleLogout}
+                      className="z-50 flex justify-start items-center mt-1 px-3 h-[40px] w-28 bg-white border border-black/40 rounded-xl shadow-lg absolute top-full right-0"
+                    >
+                      <img src={Logout} />
+                      <p>Logout</p>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
