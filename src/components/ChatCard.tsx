@@ -3,7 +3,7 @@ import PlaceHolderPFP from "../assets/Placeholder-Progile-Image.webp";
 const ChatCard = () => {
   return (
     //Container
-    <div className="w-full flex justify-between">
+    <div className="w-full flex justify-between cursor-pointer">
       {/*
         
         Chatter pfp,
