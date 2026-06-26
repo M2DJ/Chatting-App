@@ -1,7 +1,8 @@
 import PlaceHolderPerson from "../assets/Placeholder-Progile-Image.webp";
 import NightMode from "../assets/Toggle-Night.jpg";
 import Search from "../assets/Search-Icon.jpg";
-import { useEffect, useState } from "react";
+import Logout from "../assets/Logout-logo.jpg";
+import { useEffect, useRef, useState } from "react";
 import ChatCard from "../components/ChatCard";
 
 const ChatScreenMobile = () => {
@@ -9,6 +10,29 @@ const ChatScreenMobile = () => {
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
 
+  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  //useEffect for the dropdown menu
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e?.target as Node)
+      ) {
+        setIsProfileSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  //useEffect for the window re-sizing
   useEffect(() => {
     window.addEventListener("resize", () => setWidth(window.innerWidth));
 
@@ -45,11 +69,22 @@ const ChatScreenMobile = () => {
                 className="cursor-pointer w-[8vw] h-[8vw] border border-black/55 shadow-lg rounded-full bg-no-repeat bg-center bg-[length:70%] mr-3"
                 style={{ backgroundImage: `url(${NightMode})` }}
               />
-              <div
-                onClick={() => {}}
-                className="cursor-pointer w-[11vw] h-[11vw] shadow-lg border border-black/55 rounded-full bg-center bg-no-repeat bg-[length:90%]"
-                style={{ backgroundImage: `url(${PlaceHolderPerson})` }}
-              />
+              <div className="relative" ref={dropdownRef}>
+                <div
+                  onClick={() => {
+                    setIsProfileSettingsOpen((prev) => !prev);
+                  }}
+                  className="cursor-pointer w-[11vw] h-[11vw] shadow-lg border border-black/55 rounded-full bg-center bg-no-repeat bg-[length:90%]"
+                  style={{ backgroundImage: `url(${PlaceHolderPerson})` }}
+                />
+
+                {isProfileSettingsOpen && (
+                  <div className="z-50 flex justify-start items-center mt-1 px-3 h-[40px] w-28 bg-white border border-black/40 rounded-xl shadow-lg absolute top-full right-0">
+                    <img src={Logout} />
+                    <p>Logout</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
