@@ -123,10 +123,10 @@ const ChatScreen = () => {
                       ) : (
                         <div
                           onClick={handleLogout}
-                          className="z-50 cursor-pointer flex justify-start items-center mt-1 px-3 h-[40px] w-28 bg-white border border-black/40 rounded-xl shadow-lg absolute top-full left-1/2 -translate-x-1/2"
+                          className="z-50 cursor-pointer flex justify-start items-center mt-1 px-2 h-[4vw] min-w-max bg-white border border-black/40 rounded-xl shadow-lg absolute top-full left-1/2 -translate-x-1/2"
                         >
-                          <img src={Logout} />
-                          <p>Logout</p>
+                          <img src={Logout}  className="w-[2vw]"/>
+                          <p className="text-[clamp(1rem,1.5vw,3rem)]">Logout</p>
                         </div>
                       ))}
                   </div>
