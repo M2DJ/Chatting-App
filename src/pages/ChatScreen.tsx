@@ -16,7 +16,6 @@ const ChatScreen = () => {
 
   const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -59,11 +58,11 @@ const ChatScreen = () => {
         navigate("/login");
       } else {
         console.error("Error occured while logging out: ", error);
-        setError(error);
+        alert(`Error logging out: ${error}`)
       }
     } catch (e) {
       console.error("Error occured while logging out: ", e);
-      setError(`Error logging out: ${e}`);
+      alert(`Error logging out: ${e}`)
     } finally {
       setIsLoading(false);
     }
