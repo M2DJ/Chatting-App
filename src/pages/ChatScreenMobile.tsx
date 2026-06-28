@@ -15,9 +15,12 @@ const ChatScreenMobile = () => {
 
   const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  //Ref hook for the alert when there is no session
+  const hasAlerted = useRef(false);
 
   //useEffect for the dropdown menu
   useEffect(() => {
@@ -46,6 +49,33 @@ const ChatScreenMobile = () => {
     };
   }, []);
 
+  //useEffect for when there is no session
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        setIsValidating(true);
+
+        const { data } = await authService.currentSession();
+
+        const sessionExists = !!data?.session;
+
+        if (!sessionExists) {
+          if (!hasAlerted.current) {
+            hasAlerted.current = true;
+            alert("You must have an account to chat");
+          }
+          navigate("/login", { replace: true });
+        }
+      } catch (e: any) {
+        console.error("Error: ", e);
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
+
   const handleLogout = async () => {
     try {
       setIsLoading(true);
@@ -63,6 +93,14 @@ const ChatScreenMobile = () => {
       setIsLoading(false);
     }
   };
+
+  if (isValidating) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <LoadingSpinner size="xl" color="border-[#000000]" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen font-inter px-[10px]">

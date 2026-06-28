@@ -16,9 +16,12 @@ const ChatScreen = () => {
 
   const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  //Ref hook for the alert when there is no session
+  const hasAlerted = useRef(false);
 
   //useEffect for the dropdown menu
   useEffect(() => {
@@ -47,6 +50,33 @@ const ChatScreen = () => {
     };
   }, []);
 
+  //useEffect for when there is no session
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        setIsValidating(true);
+
+        const { data } = await authService.currentSession();
+
+        const sessionExists = !!data?.session;
+
+        if (!sessionExists) {
+          if (!hasAlerted.current) {
+            hasAlerted.current = true;
+            alert("You must have an account to chat");
+          }
+          navigate("/login", { replace: true });
+        }
+      } catch (e: any) {
+        console.error("Error: ", e);
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
+
   //Function for logging out
   const handleLogout = async () => {
     try {
@@ -58,15 +88,23 @@ const ChatScreen = () => {
         navigate("/login");
       } else {
         console.error("Error occured while logging out: ", error);
-        alert(`Error logging out: ${error}`)
+        alert(`Error logging out: ${error}`);
       }
     } catch (e) {
       console.error("Error occured while logging out: ", e);
-      alert(`Error logging out: ${e}`)
+      alert(`Error logging out: ${e}`);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isValidating) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <LoadingSpinner size="xl" color="border-[#000000]" />
+      </div>
+    );
+  }
 
   if (width <= 450) {
     return <ChatScreenMobile />;
@@ -125,8 +163,10 @@ const ChatScreen = () => {
                           onClick={handleLogout}
                           className="z-50 cursor-pointer flex justify-start items-center mt-1 px-2 h-[4vw] min-w-max bg-white border border-black/40 rounded-xl shadow-lg absolute top-full left-1/2 -translate-x-1/2"
                         >
-                          <img src={Logout}  className="w-[2vw]"/>
-                          <p className="text-[clamp(1rem,1.5vw,3rem)]">Logout</p>
+                          <img src={Logout} className="w-[2vw]" />
+                          <p className="text-[clamp(1rem,1.5vw,3rem)]">
+                            Logout
+                          </p>
                         </div>
                       ))}
                   </div>
