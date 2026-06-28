@@ -1,5 +1,5 @@
 import PlaceHolderPerson from "../assets/Placeholder-Progile-Image.webp";
-import NightMode from "../assets/Toggle-Night.jpg";
+import { MdLightMode, MdOutlineDarkMode } from "react-icons/md";
 import Search from "../assets/Search-Icon.jpg";
 import Logout from "../assets/Logout-logo.jpg";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import ChatCard from "../components/ChatCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { authService } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
@@ -22,6 +23,8 @@ const ChatScreen = () => {
   const navigate = useNavigate();
   //Ref hook for the alert when there is no session
   const hasAlerted = useRef(false);
+  //Theme hook
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   //useEffect for the dropdown menu
   useEffect(() => {
@@ -111,7 +114,7 @@ const ChatScreen = () => {
   } else {
     return (
       <>
-        <div className="h-screen font-inter px-[20px]">
+        <div className="h-screen font-inter px-[20px] bg-[#ffffff] dark:bg-[#333333]">
           {/*
       
       Left side of the dashboard
@@ -135,9 +138,15 @@ const ChatScreen = () => {
                 </h1>
                 <div className="flex items-center">
                   <div
-                    className="cursor-pointer w-[3vw] h-[3vw] border border-black/55 shadow-lg rounded-full bg-no-repeat bg-center bg-[length:70%] mr-1"
-                    style={{ backgroundImage: `url(${NightMode})` }}
-                  />
+                    onClick={toggleDarkMode}
+                    className="cursor-pointer w-[3vw] h-[3vw] border border-black/55 shadow-lg rounded-full flex justify-center items-center mr-1"
+                  >
+                    {isDarkMode ? (
+                      <MdLightMode className="w-full h-full p-1.5" color="#ffffff" />
+                    ) : (
+                      <MdOutlineDarkMode className="w-full h-full p-1.5" />
+                    )}
+                  </div>
                   <div className="relative" ref={dropdownRef}>
                     <div
                       onClick={() => {

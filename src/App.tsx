@@ -4,10 +4,13 @@ import SignUpPage from "./pages/SignUpPage";
 import ChatScreen from "./pages/ChatScreen";
 import EmailSubmition from "./pages/EmailSubmition";
 import PasswordReset from "./pages/PasswordReset";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
-function App() {
+function AppRoutes() {
+  const { isDarkMode } = useTheme();
+
   return (
-    <div className="dark">
+    <div className={isDarkMode ? "dark" : ""}>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route element={<LoginPage />} path="/login" />
@@ -17,6 +20,14 @@ function App() {
         <Route element={<ChatScreen />} path="/chat" />
       </Routes>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppRoutes />
+    </ThemeProvider>
   );
 }
 
