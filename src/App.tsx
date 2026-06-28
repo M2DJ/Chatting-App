@@ -7,16 +7,16 @@ import PasswordReset from "./pages/PasswordReset";
 
 function App() {
   return (
-    <>
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" replace/>}/>
-      <Route element={<LoginPage />} path="/login"/>
-      <Route element={<SignUpPage/>} path="/signup" />
-      <Route element={<EmailSubmition />} path="/forgotpassword"/>
-      <Route element={<PasswordReset />} path="/passwordreset"/>
-      <Route element={<ChatScreen/>} path="/chat"/>
-    </Routes>      
-    </>
+    <div className="">
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route element={<LoginPage />} path="/login" />
+        <Route element={<SignUpPage />} path="/signup" />
+        <Route element={<EmailSubmition />} path="/forgotpassword" />
+        <Route element={<PasswordReset />} path="/passwordreset" />
+        <Route element={<ChatScreen />} path="/chat" />
+      </Routes>
+    </div>
   );
 }
 
