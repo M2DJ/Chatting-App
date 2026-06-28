@@ -114,7 +114,7 @@ const LoginPage = () => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] text-text-light dark:text-text-dark sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-auth-light dark:bg-auth-dark"
+                  className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] text-text-light dark:text-text-dark sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 dark:border-white/50 rounded-md bg-auth-light dark:bg-auth-dark"
                 >
                   {isLoading ? (
                     <div className="flex justify-center items-center">
@@ -140,7 +140,7 @@ const LoginPage = () => {
             <div className="flex justify-center mb-2 font-inter text-[clamp(16px,1vw,100px)] text-text-light dark:text-text-dark">
               <p className="mr-1">Don't have an account?</p>
               <button
-                className="cursor-pointer text-blue-400"
+                className="cursor-pointer text-blue-700 dark:text-blue-400"
                 onClick={() => {
                   setIsOpening(false);
 
@@ -237,7 +237,7 @@ const LoginPage = () => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] text-text-light dark:text-text-dark sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-auth-light dark:bg-auth-dark"
+                  className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] text-text-light dark:text-text-dark sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 dark:border-white/50 rounded-md bg-auth-light dark:bg-auth-dark"
                 >
                   {isLoading ? (
                     <div className="flex justify-center items-center">
@@ -263,7 +263,7 @@ const LoginPage = () => {
             <div className="flex justify-center mb-2 font-inter text-[clamp(16px,1vw,100px)] text-text-light dark:text-text-dark">
               <p className="mr-1">Don't have an account?</p>
               <button
-                className="cursor-pointer text-blue-400"
+                className="cursor-pointer text-blue-700 dark:text-blue-400"
                 onClick={() => {
                   setIsOpening(false);
 

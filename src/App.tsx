@@ -7,7 +7,7 @@ import PasswordReset from "./pages/PasswordReset";
 
 function App() {
   return (
-    <div className="">
+    <div className="dark">
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route element={<LoginPage />} path="/login" />
