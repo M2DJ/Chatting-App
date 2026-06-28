@@ -46,6 +46,19 @@ class SupabaseAuthService {
     }
   }
 
+  async currentSession() {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+
+      if(error) throw error;
+
+      return { success: true, data: data, error: null };
+    } catch (e: any) {
+      console.error("Failed to fetch session", e);
+      return { success: false, data: null, error: e.message || e };
+    }
+  }
+
   async sendPasswordResetEmail(email: string, redirectTo: string) {
     try {
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {

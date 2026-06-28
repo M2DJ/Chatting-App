@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import Correct from "../assets/Correct-Icon.jpg";
 import { useEffect, useState } from "react";
+import { authService } from "../services/AuthService";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const PasswordReset = () => {
   {
@@ -17,7 +20,15 @@ const PasswordReset = () => {
   {
     /* State for handling the form submition */
   }
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [updateSuccessful, setUpdateSuccessful] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  //Window re-size useEffect
   useEffect(() => {
     setIsOpening(true);
     window.addEventListener("resize", () => setWidth(window.innerWidth));
@@ -27,9 +38,42 @@ const PasswordReset = () => {
     };
   }, []);
 
-  const handleFormSubmition = () => {
-    //Place holder
-    setUpdateSuccessful(true);
+  //Link validation useEffect
+  useEffect(() => {
+    const checkRecoveryAccess = async () => {
+      const hasTokenInUrl = window.location.hash.includes("access_token=");
+
+      const { data } = await authService.currentSession();
+      const isRecoverySession =
+        data?.session?.user?.app_metadata?.provider === "email" || data != null;
+
+      if (!hasTokenInUrl && !isRecoverySession) {
+        navigate("/login", { replace: true });
+        return;
+      }
+    };
+
+    checkRecoveryAccess();
+  }, [navigate]);
+
+  const handleFormSubmition = async (e: any) => {
+    e.preventDefault();
+
+    if (newPassword == confirmNewPassword) {
+      try {
+        setIsLoading(true);
+        const { success } = await authService.updateUserPassword(newPassword);
+
+        if (success) setUpdateSuccessful(true);
+      } catch (e: any) {
+        console.error("Error occured while updating the password: ", e);
+        setError("Error updating password");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setError("Passwords do not match");
+    }
   };
 
   if (width <= 450) {
@@ -85,13 +129,35 @@ const PasswordReset = () => {
                   New Password
                 </label>
                 <br />
-                <input className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4" />
+                <input
+                  type="password"
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                />
+                <label className="text-[clamp(16px,1.5vw,90px)]">
+                  Confirm New Password
+                </label>
+                <br />
+                <input
+                  type="password"
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                />
 
                 <div className="flex justify-center">
-                  <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                    Submit
+                  <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                    {isLoading ? (
+                      <LoadingSpinner size="medium" color="border-[#ffffff]" />
+                    ) : (
+                      "Update"
+                    )}
                   </button>
                 </div>
+                {error && (
+                  <p className="font-lalezar flex justify-center mt-1 text-red-500">
+                    {error}
+                  </p>
+                )}
               </form>
             </div>
           )}
@@ -153,6 +219,7 @@ const PasswordReset = () => {
                 <br />
                 <input
                   type="password"
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
                 />
                 <label className="text-[clamp(16px,1.5vw,90px)]">
@@ -161,14 +228,24 @@ const PasswordReset = () => {
                 <br />
                 <input
                   type="password"
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
                   className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-8"
                 />
 
                 <div className="flex justify-center">
-                  <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                    Update
+                  <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                    {isLoading ? (
+                      <LoadingSpinner size="medium" color="border-[#ffffff]" />
+                    ) : (
+                      "Update"
+                    )}
                   </button>
                 </div>
+                {error && (
+                  <p className="font-lalezar flex justify-center mt-1 text-red-500 text-[clamp(1rem,1.5vw,5rem)]">
+                    {error}
+                  </p>
+                )}
               </form>
             </div>
           )}

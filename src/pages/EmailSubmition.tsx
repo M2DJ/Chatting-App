@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { authService } from "../services/AuthService";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const EmailSubmition = () => {
   {
@@ -13,6 +15,10 @@ const EmailSubmition = () => {
   }
   const [isOpening, setIsOpening] = useState(false);
 
+  //Email state
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     setIsOpening(true);
     window.addEventListener("resize", () => setWidth(window.innerWidth));
@@ -21,6 +27,27 @@ const EmailSubmition = () => {
       window.removeEventListener("resize", () => setWidth(window.innerWidth));
     };
   }, []);
+
+  const handleFormSubmition = async () => {
+    try {
+      setIsLoading(true);
+
+      const { success, error } = await authService.sendPasswordResetEmail(
+        email,
+        "http://localhost:5173/#/passwordreset",
+      );
+
+      setIsLoading(false);
+
+      if (success) {
+        alert("An email has been sent, check your inbox");
+      } else {
+        alert(`Error sending email: ${error}`);
+      }
+    } catch (e: any) {
+      alert(`Error sending email: ${e}`);
+    }
+  };
 
   if (width <= 450) {
     return (
@@ -43,16 +70,23 @@ const EmailSubmition = () => {
             Form element
 
           */}
-            <form className="mb-3">
+            <form className="mb-3" onSubmit={handleFormSubmition}>
               <label className="text-[clamp(16px,1.5vw,90px)]">
                 Enter Email For Password Change
               </label>
               <br />
-              <input className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4" />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+              />
 
               <div className="flex justify-center">
-                <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                  Submit
+                <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                  {isLoading ? (
+                    <LoadingSpinner size="medium" color="border-[#ffffff]" />
+                  ) : (
+                    "Submit"
+                  )}
                 </button>
               </div>
             </form>
@@ -81,16 +115,23 @@ const EmailSubmition = () => {
             Form element
 
           */}
-            <form className="mb-3">
+            <form className="mb-3" onSubmit={handleFormSubmition}>
               <label className="text-[clamp(16px,1.5vw,90px)]">
                 Enter Email For Password Change
               </label>
               <br />
-              <input className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4" />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+              />
 
               <div className="flex justify-center">
-                <button className="cursor-pointer py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
-                  Submit
+                <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                  {isLoading ? (
+                    <LoadingSpinner size="medium" color="border-[#ffffff]" />
+                  ) : (
+                    "Submit"
+                  )}
                 </button>
               </div>
             </form>
