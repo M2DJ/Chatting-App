@@ -131,7 +131,7 @@ const PasswordReset = () => {
                 <input
                   type="password"
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-4"
                 />
                 <label className="text-[clamp(16px,1.5vw,90px)]">
                   Confirm New Password
@@ -140,7 +140,7 @@ const PasswordReset = () => {
                 <input
                   type="password"
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-4"
                 />
 
                 <div className="flex justify-center">
@@ -219,7 +219,7 @@ const PasswordReset = () => {
                 <input
                   type="password"
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-4"
                 />
                 <label className="text-[clamp(16px,1.5vw,90px)]">
                   Confirm New Password
@@ -228,7 +228,7 @@ const PasswordReset = () => {
                 <input
                   type="password"
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-8"
+                  className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-8"
                 />
 
                 <div className="flex justify-center">

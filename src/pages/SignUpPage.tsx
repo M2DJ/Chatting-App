@@ -54,7 +54,7 @@ const SignUpPage = () => {
 
         if (success) {
           setIsLoading(false);
-          navigate("/chat");
+          navigate("/login");
         } else {
           setError("Failed to Sign Up, Please Try agian");
         }
@@ -94,13 +94,13 @@ const SignUpPage = () => {
               <br />
               <input
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-1"
+                className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-1"
               />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
               <input
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-1"
+                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-1"
                 type="password"
               />
               <label className="text-[clamp(16px,1.5vw,90px)]">
@@ -109,7 +109,7 @@ const SignUpPage = () => {
               <br />
               <input
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-5"
+                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-5"
                 type="password"
               />
 
@@ -207,13 +207,13 @@ const SignUpPage = () => {
               <br />
               <input
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-[4vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-1"
+                className="h-[4vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-1"
               />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
               <input
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-1"
+                className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-1"
                 type="password"
               />
               <label className="text-[clamp(16px,1.5vw,90px)]">
@@ -222,7 +222,7 @@ const SignUpPage = () => {
               <br />
               <input
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-5"
+                className="h-[4vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-5"
                 type="password"
               />
 

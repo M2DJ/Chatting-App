@@ -88,14 +88,14 @@ const LoginPage = () => {
               <input
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-[5vh] min-h-9 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                className="h-[5vh] min-h-9 w-full border bg-[#f2f2f2] text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
               />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
               <input
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4"
+                className="h-[5vh] min-h-9 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-4"
               />
 
               <div className="flex justify-end mb-8">
@@ -208,14 +208,14 @@ const LoginPage = () => {
               <input
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 rounded-xl pl-2 mb-4"
+                className="h-[5vh] min-h-10 max-h-80 w-full border text-[clamp(16px,1.25vw,80px)] border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-4"
               />
               <label className="text-[clamp(16px,1.5vw,90px)]">Password</label>
               <br />
               <input
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-[5vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 rounded-xl pl-2 mb-4"
+                className="h-[5vh] min-h-10 max-h-80 w-full text-[clamp(16px,1.25vw,80px)] border border-black/55 bg-[#f2f2f2] rounded-xl pl-2 mb-4"
               />
 
               <div className="flex justify-end mb-8">
