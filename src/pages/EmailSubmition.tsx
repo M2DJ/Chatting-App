@@ -51,17 +51,17 @@ const EmailSubmition = () => {
 
   if (width <= 450) {
     return (
-      <div className="h-screen bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+      <div className="h-screen bg-auth-light dark:bg-auth-dark">
         <div className="h-full flex justify-center items-center">
           <div
-            className={`w-[80%] min-w-70 py-5 px-5 bg-white rounded-lg shadow-lg font-lalezar transition-all duration-500 ease-out ${isOpening ? "scale-100 opacity-100 blur-0" : "scale-90 opacity-30 blur-md"}`}
+            className={`w-[80%] min-w-70 py-5 px-5 bg-form-light dark:bg-form-dark rounded-lg shadow-lg font-lalezar transition-all duration-500 ease-out ${isOpening ? "scale-100 opacity-100 blur-0" : "scale-90 opacity-30 blur-md"}`}
           >
             {/* 
 
             Header of the form
           
           */}
-            <p className="flex justify-start mb-6 text-[clamp(40px,2vw,150px)]">
+            <p className="flex justify-start mb-6 text-[clamp(40px,2vw,150px)] text-text-light dark:text-text-dark">
               Password Reset
             </p>
 
@@ -71,7 +71,7 @@ const EmailSubmition = () => {
 
           */}
             <form className="mb-3" onSubmit={handleFormSubmition}>
-              <label className="text-[clamp(16px,1.5vw,90px)]">
+              <label className="text-[clamp(16px,1.5vw,90px)] text-text-light dark:text-text-dark">
                 Enter Email For Password Change
               </label>
               <br />
@@ -81,7 +81,7 @@ const EmailSubmition = () => {
               />
 
               <div className="flex justify-center">
-                <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] text-text-light dark:text-text-dark sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 dark:border-white/50 rounded-md bg-auth-light dark:bg-auth-dark">
                   {isLoading ? (
                     <LoadingSpinner size="medium" color="border-[#ffffff]" />
                   ) : (
@@ -96,17 +96,17 @@ const EmailSubmition = () => {
     );
   } else {
     return (
-      <div className="h-screen bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+      <div className="h-screen bg-auth-light dark:bg-auth-dark">
         <div className="h-full flex justify-center items-center">
           <div
-            className={`w-[40%] min-w-90 py-5 px-5 bg-white rounded-lg shadow-lg font-lalezar transition-all duration-500 ease-out ${isOpening ? "scale-100 opacity-100 blur-0" : "scale-90 opacity-30 blur-md"}`}
+            className={`w-[40%] min-w-90 py-5 px-5 bg-form-light dark:bg-form-dark rounded-lg shadow-lg font-lalezar transition-all duration-500 ease-out ${isOpening ? "scale-100 opacity-100 blur-0" : "scale-90 opacity-30 blur-md"}`}
           >
             {/* 
 
             Header of the form
           
           */}
-            <p className="flex justify-start mb-6 text-[clamp(40px,2vw,150px)]">
+            <p className="flex justify-start mb-6 text-[clamp(40px,2vw,150px)] text-text-light dark:text-text-dark">
               Password Reset
             </p>
 
@@ -116,7 +116,7 @@ const EmailSubmition = () => {
 
           */}
             <form className="mb-3" onSubmit={handleFormSubmition}>
-              <label className="text-[clamp(16px,1.5vw,90px)]">
+              <label className="text-[clamp(16px,1.5vw,90px)] text-text-light dark:text-text-dark">
                 Enter Email For Password Change
               </label>
               <br />
@@ -126,7 +126,7 @@ const EmailSubmition = () => {
               />
 
               <div className="flex justify-center">
-                <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 rounded-md bg-linear-[90deg,#ffffff_0%,#999999_87%]">
+                <button className="cursor-pointer flex justify-center py-2 w-full text-[clamp(1.5em,2vw,2.5em)] text-text-light dark:text-text-dark sm:max-w-[50%] md:max-w-[60%] lg:max-w-[60%] border border-black/50 dark:border-white/50 rounded-md bg-auth-light dark:bg-auth-dark">
                   {isLoading ? (
                     <LoadingSpinner size="medium" color="border-[#ffffff]" />
                   ) : (

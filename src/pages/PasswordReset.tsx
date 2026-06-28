@@ -39,21 +39,21 @@ const PasswordReset = () => {
   }, []);
 
   //Link validation useEffect
-  useEffect(() => {
-    const checkRecoveryAccess = async () => {
-      const hasTokenInUrl = window.location.hash.includes("access_token=");
+  // useEffect(() => {
+  //   const checkRecoveryAccess = async () => {
+  //     const hasTokenInUrl = window.location.hash.includes("access_token=");
 
-      const { data } = await authService.currentSession();
-      const sessionExists = !!data?.session;
+  //     const { data } = await authService.currentSession();
+  //     const sessionExists = !!data?.session;
 
-      if (!hasTokenInUrl && !sessionExists) {
-        navigate("/login", { replace: true });
-        return;
-      }
-    };
+  //     if (!hasTokenInUrl && !sessionExists) {
+  //       navigate("/login", { replace: true });
+  //       return;
+  //     }
+  //   };
 
-    checkRecoveryAccess();
-  }, [navigate]);
+  //   checkRecoveryAccess();
+  // }, [navigate]);
 
   const handleFormSubmition = async (e: any) => {
     e.preventDefault();
