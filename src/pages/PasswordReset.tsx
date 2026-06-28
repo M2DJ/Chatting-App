@@ -44,10 +44,9 @@ const PasswordReset = () => {
       const hasTokenInUrl = window.location.hash.includes("access_token=");
 
       const { data } = await authService.currentSession();
-      const isRecoverySession =
-        data?.session?.user?.app_metadata?.provider === "email" || data != null;
+      const sessionExists = !!data?.session;
 
-      if (!hasTokenInUrl && !isRecoverySession) {
+      if (!hasTokenInUrl && !sessionExists) {
         navigate("/login", { replace: true });
         return;
       }
