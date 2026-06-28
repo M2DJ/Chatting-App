@@ -18,8 +18,7 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return saved === "dark";
   });
 
   const toggleDarkMode = () => setIsDarkMode((prev) => !prev);
@@ -28,7 +27,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
-  
+
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
       {children}
