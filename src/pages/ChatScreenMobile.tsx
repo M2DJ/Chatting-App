@@ -130,11 +130,12 @@ const ChatScreenMobile = () => {
             </h1>
             <div className="flex items-center">
               <div
-              onClick={toggleDarkMode}
-              className="cursor-pointer w-[8vw] h-[8vw] border border-black/55 shadow-lg rounded-full bg-no-repeat bg-center bg-[length:70%] mr-3">
+                onClick={toggleDarkMode}
+                className="cursor-pointer w-[8vw] h-[8vw] border border-black/55 shadow-lg rounded-full bg-no-repeat bg-center bg-[length:70%] mr-3"
+              >
                 {isDarkMode ? (
                   <MdLightMode
-                    className="w-full h-full p-1.5"
+                    className="w-full h-full p-1"
                     color="#ffffff"
                   />
                 ) : (

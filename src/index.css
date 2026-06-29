@@ -32,4 +32,12 @@
     --color-border-dark: #AEAEAE;
 }
 
+@layer base {
+    *{
+        transition-property: background-color, border-color, color, fill, stroke;
+        transition-timing-function: ease-in-out;
+        transition-duration: 200ms;
+    }
+}
+
 @custom-variant dark (&:where(.dark, .dark *));

@@ -143,7 +143,7 @@ const ChatScreen = () => {
                   >
                     {isDarkMode ? (
                       <MdLightMode
-                        className="w-full h-full p-1.5"
+                        className="w-full h-full p-1"
                         color="#ffffff"
                       />
                     ) : (
