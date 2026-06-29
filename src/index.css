@@ -18,6 +18,8 @@
 
     --color-text-light: #000000;
 
+    --color-border-light: #000000;
+
 
     /* Dark mode */
     --background-image-auth-dark: linear-gradient(90deg, #7D7D7D 0%, #333333 87%);
@@ -26,6 +28,8 @@
     --color-input-dark: #BDBDBD;
 
     --color-text-dark: #ffffff;
+
+    --color-border-dark: #AEAEAE;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

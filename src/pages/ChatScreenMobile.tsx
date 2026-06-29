@@ -1,5 +1,5 @@
 import PlaceHolderPerson from "../assets/Placeholder-Progile-Image.webp";
-import NightMode from "../assets/Toggle-Night.jpg";
+import { MdLightMode, MdOutlineDarkMode } from "react-icons/md";
 import Search from "../assets/Search-Icon.jpg";
 import Logout from "../assets/Logout-logo.jpg";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +7,7 @@ import ChatCard from "../components/ChatCard";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { authService } from "../services/AuthService";
+import { useTheme } from "../context/ThemeContext";
 
 const ChatScreenMobile = () => {
   const [width, setWidth] = useState(
@@ -21,6 +22,8 @@ const ChatScreenMobile = () => {
   const navigate = useNavigate();
   //Ref hook for the alert when there is no session
   const hasAlerted = useRef(false);
+  //Theme hook
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   //useEffect for the dropdown menu
   useEffect(() => {
@@ -103,7 +106,7 @@ const ChatScreenMobile = () => {
   }
 
   return (
-    <div className="h-screen font-inter px-[10px]">
+    <div className="h-screen font-inter px-[10px] bg-[#ffffff] dark:bg-[#333333]">
       {/*
       
       Left side of the dashboard
@@ -115,21 +118,29 @@ const ChatScreenMobile = () => {
           Container that holds the margin for the left side
           
           */}
-        <div className="mt-2">
+        <div className="pt-2">
           {/*
             
             Header part with the search bar
             
             */}
           <div className="flex justify-between items-center mb-2">
-            <h1 className="font-bold text-[clamp(1.5rem,2.8vw,5.5rem)]">
+            <h1 className="font-bold text-[clamp(1.5rem,2.8vw,5.5rem)] text-text-light dark:text-text-dark">
               Chatting App
             </h1>
             <div className="flex items-center">
               <div
-                className="cursor-pointer w-[8vw] h-[8vw] border border-black/55 shadow-lg rounded-full bg-no-repeat bg-center bg-[length:70%] mr-3"
-                style={{ backgroundImage: `url(${NightMode})` }}
-              />
+              onClick={toggleDarkMode}
+              className="cursor-pointer w-[8vw] h-[8vw] border border-black/55 shadow-lg rounded-full bg-no-repeat bg-center bg-[length:70%] mr-3">
+                {isDarkMode ? (
+                  <MdLightMode
+                    className="w-full h-full p-1.5"
+                    color="#ffffff"
+                  />
+                ) : (
+                  <MdOutlineDarkMode className="w-full h-full p-1.5" />
+                )}
+              </div>
               <div className="relative" ref={dropdownRef}>
                 <div
                   onClick={() => {
@@ -166,7 +177,7 @@ const ChatScreenMobile = () => {
             <input
               placeholder="Search chat"
               type="text"
-              className={`w-full h-[2vw] min-h-6 max-h-15 ${width < 2000 ? "pl-6" : "pl-10"} border rounded-md bg-[#F2F2F2] placeholder:text-[clamp(1.1rem,1.1vw,3rem)] placeholder:text-black`}
+              className={`w-full h-[2vw] min-h-6 max-h-15 ${width < 2000 ? "pl-6" : "pl-10"} border rounded-md bg-input-light dark:bg-input-dark placeholder:text-[clamp(1.1rem,1.1vw,3rem)] placeholder:text-black`}
             />
             <img
               src={Search}

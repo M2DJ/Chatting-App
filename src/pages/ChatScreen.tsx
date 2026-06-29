@@ -120,7 +120,7 @@ const ChatScreen = () => {
       Left side of the dashboard
       
       */}
-          <div className="h-screen w-[35%] min-w-80 border border-y-transparent border-l-transparent">
+          <div className="h-screen w-[35%] min-w-80 border border-border-light dark:border-border-dark border-y-transparent border-l-transparent dark:border-y-transparent dark:border-l-transparent">
             {/*
           
           Container that holds the margin for the left side
@@ -133,7 +133,7 @@ const ChatScreen = () => {
             
             */}
               <div className="flex justify-between mb-2">
-                <h1 className="font-bold text-[clamp(1.5rem,2.8vw,5.5rem)]">
+                <h1 className="font-bold text-[clamp(1.5rem,2.8vw,5.5rem)] text-text-light dark:text-text-dark">
                   Chatting App
                 </h1>
                 <div className="flex items-center">
@@ -142,7 +142,10 @@ const ChatScreen = () => {
                     className="cursor-pointer w-[3vw] h-[3vw] border border-black/55 shadow-lg rounded-full flex justify-center items-center mr-1"
                   >
                     {isDarkMode ? (
-                      <MdLightMode className="w-full h-full p-1.5" color="#ffffff" />
+                      <MdLightMode
+                        className="w-full h-full p-1.5"
+                        color="#ffffff"
+                      />
                     ) : (
                       <MdOutlineDarkMode className="w-full h-full p-1.5" />
                     )}
@@ -191,7 +194,7 @@ const ChatScreen = () => {
                 <input
                   placeholder="Search chat"
                   type="text"
-                  className={`w-full h-[2vw] min-h-6 max-h-15 ${width < 2000 ? "pl-6" : "pl-10"} border rounded-md bg-[#F2F2F2] placeholder:text-[clamp(1.1rem,1.1vw,3rem)] placeholder:text-black`}
+                  className={`w-full h-[2vw] min-h-6 max-h-15 ${width < 2000 ? "pl-6" : "pl-10"} border rounded-md bg-input-light dark:bg-input-dark placeholder:text-[clamp(1.1rem,1.1vw,3rem)] placeholder:text-black`}
                 />
                 <img
                   src={Search}
