@@ -213,7 +213,7 @@ const ChatScreen = () => {
             
             */}
               <div onClick={() => setChatSelected("1")}>
-                <ChatCardSearch />
+                <ChatCard />
               </div>
             </div>
           </div>

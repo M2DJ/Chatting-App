@@ -1,6 +1,7 @@
 import { IoPerson } from "react-icons/io5";
+import type { ChatCardSearchProps } from "../interfaces/ComponentsInterface";
 
-const ChatCardSearch = () => {
+const ChatCardSearch = ({userName}: ChatCardSearchProps) => {
   return (
     <div className="w-full flex justify-between cursor-pointer">
       {/* Add room id as a key to every chat card */}
@@ -17,7 +18,7 @@ const ChatCardSearch = () => {
         </div>
         {/* Chatter name and last sent message part */}
         <div className="flex flex-col justify-center ml-2 text-[clamp(1rem,1.5vw,2rem)] text-text-light dark:text-text-dark">
-          <p className="font-bold">Chatter Name</p>
+          <p className="font-bold">{userName}</p>
         </div>
       </div>
     </div>
