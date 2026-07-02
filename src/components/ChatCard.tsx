@@ -4,6 +4,7 @@ const ChatCard = () => {
   return (
     //Container
     <div className="w-full flex justify-between cursor-pointer">
+      {/* Add room id as a key to every chat card */}
       {/*
         
         Chatter pfp,
