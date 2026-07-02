@@ -1,5 +1,6 @@
 import PlaceHolderPerson from "../assets/Placeholder-Progile-Image.webp";
 import { MdLightMode, MdOutlineDarkMode } from "react-icons/md";
+import { IoMdChatbubbles } from "react-icons/io";
 import Search from "../assets/Search-Icon.jpg";
 import Logout from "../assets/Logout-logo.jpg";
 import { useEffect, useRef, useState } from "react";
@@ -9,11 +10,14 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { authService } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import ChatRoom from "../components/ChatRoom";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
+
+  const [chatSelected, setChatSelected] = useState("");
 
   const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,7 +118,7 @@ const ChatScreen = () => {
   } else {
     return (
       <>
-        <div className="h-screen font-inter px-[20px] bg-[#ffffff] dark:bg-[#333333]">
+        <div className="flex h-screen font-inter px-[20px] bg-[#ffffff] dark:bg-[#333333]">
           {/*
       
       Left side of the dashboard
@@ -207,9 +211,30 @@ const ChatScreen = () => {
             Chat Card
             
             */}
-              <ChatCard />
+              <div onClick={() => setChatSelected("1")}>
+                <ChatCard />
+              </div>
             </div>
           </div>
+
+          {/*
+          
+          The chat itself
+
+          */}
+          <div className="flex-1 ml-3 mt-2">
+            {chatSelected ? (
+              <div>
+                <ChatRoom room={chatSelected} />
+              </div>
+            ) : (
+              <div className="h-full flex flex-col justify-center items-center">
+                <IoMdChatbubbles size='9vw' color={isDarkMode ? "#ffffff" : "#000000"}/>
+                <p className="text-[clamp(15px,2vw,200px)] text-text-light dark:text-text-dark">Choos a room to start chatting!</p>
+              </div>
+            )}
+          </div>
+
         </div>
       </>
     );
