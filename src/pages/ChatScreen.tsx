@@ -11,6 +11,7 @@ import { authService } from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import ChatRoom from "../components/ChatRoom";
+import ChatCardSearch from "../components/ChatCardSearch";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
@@ -212,7 +213,7 @@ const ChatScreen = () => {
             
             */}
               <div onClick={() => setChatSelected("1")}>
-                <ChatCard />
+                <ChatCardSearch />
               </div>
             </div>
           </div>
