@@ -18,7 +18,7 @@ const ChatCardSearch = ({userName}: ChatCardSearchProps) => {
         </div>
         {/* Chatter name and last sent message part */}
         <div className="flex flex-col justify-center ml-2 text-[clamp(1rem,1.5vw,2rem)] text-text-light dark:text-text-dark">
-          <p className="font-bold">{userName}</p>
+          <p className="">{userName}</p>
         </div>
       </div>
     </div>

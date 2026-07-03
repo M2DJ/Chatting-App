@@ -6,7 +6,7 @@ class ChannelService {
 
     try {
       const { data, error } = await supabase
-        .from("usersPublic")
+        .from("UsersPublic")
         .select("user_email, user_name")
         .ilike(isEmail ? "user_email" : "user_name", `%${userName}%`);
 

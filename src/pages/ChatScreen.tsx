@@ -3,7 +3,7 @@ import { MdLightMode, MdOutlineDarkMode } from "react-icons/md";
 import { IoMdChatbubbles } from "react-icons/io";
 import Search from "../assets/Search-Icon.jpg";
 import Logout from "../assets/Logout-logo.jpg";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatScreenMobile from "./ChatScreenMobile";
 import ChatCard from "../components/ChatCard";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -12,17 +12,25 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import ChatRoom from "../components/ChatRoom";
 import ChatCardSearch from "../components/ChatCardSearch";
+import type { SearchedUsers } from "../interfaces/SupabaseInterface";
+import { channelService } from "../services/ChannelService";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
 
+  //Chat state
   const [chatSelected, setChatSelected] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
+  const hasSearched = useRef(false);
 
+  //loading state
   const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  const [error, setError] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -101,6 +109,29 @@ const ChatScreen = () => {
     } catch (e) {
       console.error("Error occured while logging out: ", e);
       alert(`Error logging out: ${e}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  //Function for looking up user
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+
+      const { data: users, error } =
+        await channelService.lookUpUsers(searchQuery);
+      if (error) {
+        setError(error);
+      }
+
+      setSearchedUsers(users!);
+      console.log(searchedUsers);
+      hasSearched.current = true;
+    } catch (e: any) {
+      console.error("Error searching for users: ", e);
+      setError(e);
     } finally {
       setIsLoading(false);
     }
@@ -195,8 +226,9 @@ const ChatScreen = () => {
             Chat Search Bar
             
             */}
-              <div className="relative mb-9">
+              <form className="relative mb-9" onSubmit={handleSearch}>
                 <input
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search chat"
                   type="text"
                   className={`w-full h-[2vw] min-h-6 max-h-15 ${width < 2000 ? "pl-6" : "pl-10"} border rounded-md bg-input-light dark:bg-input-dark placeholder:text-[clamp(1.1rem,1.1vw,3rem)] placeholder:text-black`}
@@ -205,15 +237,43 @@ const ChatScreen = () => {
                   src={Search}
                   className="w-[1.5vw] h-[1.5vw] min-w-5 min-h-5 absolute top-1/2 -translate-y-1/2 left-1"
                 />
-              </div>
+              </form>
 
               {/*
             
             Chat Card
             
             */}
-              <div onClick={() => setChatSelected("1")}>
-                <ChatCard />
+              <div>
+                {isLoading ? (
+                  <div className=" flex justify-center">
+                    <LoadingSpinner
+                      size="medium"
+                      color={
+                        isDarkMode ? "border-[#ffffff]" : "border-[#000000]"
+                      }
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {searchedUsers.length == 0 &&
+                    hasSearched.current == true ? (
+                      <p>No Matches Found</p>
+                    ) : (
+                      searchedUsers.map((user, index) => (
+                        <div key={index}>
+                          <ChatCardSearch
+                            userName={
+                              user.user_name != null
+                                ? user.user_name
+                                : user.user_email
+                            }
+                          />
+                        </div>
+                      ))
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -230,12 +290,16 @@ const ChatScreen = () => {
               </div>
             ) : (
               <div className="h-full flex flex-col justify-center items-center">
-                <IoMdChatbubbles size='9vw' color={isDarkMode ? "#ffffff" : "#000000"}/>
-                <p className="text-[clamp(15px,2vw,200px)] text-text-light dark:text-text-dark">Choos a room to start chatting!</p>
+                <IoMdChatbubbles
+                  size="9vw"
+                  color={isDarkMode ? "#ffffff" : "#000000"}
+                />
+                <p className="text-[clamp(15px,2vw,200px)] text-text-light dark:text-text-dark">
+                  Choos a room to start chatting!
+                </p>
               </div>
             )}
           </div>
-
         </div>
       </>
     );
