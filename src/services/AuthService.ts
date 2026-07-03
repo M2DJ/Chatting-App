@@ -50,7 +50,7 @@ class SupabaseAuthService {
     try {
       const { data, error } = await supabase.auth.getSession();
 
-      if(error) throw error;
+      if (error) throw error;
 
       return { success: true, data: data, error: null };
     } catch (e: any) {
@@ -85,6 +85,29 @@ class SupabaseAuthService {
       return { success: true, data: data, error: null };
     } catch (e: any) {
       console.error("Error updating user password: ", e);
+      return { success: false, data: null, error: e.message };
+    }
+  }
+
+  async addToUsersPublicTable(
+    userId: string,
+    userEmail: string,
+    userName?: string,
+  ) {
+    try {
+      const { error } = await supabase.from("UsersPublic").insert({
+        user_id: userId,
+        user_email: userEmail,
+        user_name: userName,
+      });
+
+      if(error){
+        return { success: false, data: null, error: error.message};
+      }
+
+      return { success: true, data: null, error: null};
+    } catch (e: any) {
+      console.error("Error occured while inserting user to 'UserPublic' table: ", e);
       return { success: false, data: null, error: e.message };
     }
   }

@@ -47,11 +47,32 @@ const SignUpPage = () => {
     try {
       setIsLoading(true);
       if (confirmPassword == password) {
-        const { success } = await authService.signUpWithEmail(email, password);
+        const { success, data: user } = await authService.signUpWithEmail(
+          email,
+          password,
+        );
 
         if (success) {
-          setIsLoading(false);
-          navigate("/login");
+          try {
+            const { success: successAddingUser, error } =
+              await authService.addToUsersPublicTable(
+                user?.user?.id!,
+                user?.user?.email!,
+                user?.user?.user_metadata?.username,
+              );
+            
+              if( error ) {
+                return setError(error);
+              }
+            
+              if (successAddingUser) {
+              setIsLoading(false);
+              navigate("/login");
+            }
+          } catch (e: any) {
+            console.error("Error in Sign in page form submition: ", e);
+            setError(e.message);
+          }
         } else {
           setError("Failed to Sign Up, Please Try agian");
         }
