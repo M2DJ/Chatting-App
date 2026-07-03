@@ -261,7 +261,7 @@ const ChatScreen = () => {
                       <p className="flex justify-center text-[clamp(16px,1.8vw,180px)] text-text-light dark:text-text-dark">No Matches Found</p>
                     ) : (
                       searchedUsers.map((user, index) => (
-                        <div key={index}>
+                        <div key={index} onClick={() => setChatSelected('1')}>
                           <ChatCardSearch
                             userName={
                               user.user_name != null

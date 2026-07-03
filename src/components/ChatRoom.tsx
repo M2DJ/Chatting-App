@@ -1,8 +1,11 @@
 import type { ChatRoomProps } from "../interfaces/ComponentsInterface"
 
-const ChatRoom = ({ room }: ChatRoomProps) => {
+const ChatRoom = ({ room, onClick }: ChatRoomProps) => {
   return (
-    <div>ChatRoom</div>
+    <div className="h-screen">
+      {onClick && <div onClick={onClick}>on click function</div>}
+      <p>Hello</p>
+    </div>
   )
 }
 

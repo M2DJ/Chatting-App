@@ -143,13 +143,15 @@ const ChatScreenMobile = () => {
   }
 
   return (
-    <div className="h-screen font-inter px-[10px] bg-[#ffffff] dark:bg-[#333333]">
+    <div className="relative overflow-hidden h-screen font-inter px-[10px] bg-[#ffffff] dark:bg-[#333333]">
       {/*
       
-      Left side of the dashboard
+      Chat selection part
       
       */}
-      <div className="h-screen min-w-40">
+      <div
+        className={`h-screen min-w-40 transition-transform ${chatSelected ? "overflow-hidden -translate-x-full duration-300 ease-out" : ""}`}
+      >
         {/*
           
           Container that holds the margin for the left side
@@ -242,7 +244,7 @@ const ChatScreenMobile = () => {
                   </p>
                 ) : (
                   searchedUsers.map((user, index) => (
-                    <div key={index}>
+                    <div key={index} onClick={() => setChatSelected("1")}>
                       <ChatCardSearch
                         userName={
                           user.user_name != null
@@ -257,15 +259,21 @@ const ChatScreenMobile = () => {
             )}
           </div>
         </div>
+      </div>
 
-        {/*
+      {/*
           
-          The chat itself
+          Chat room
 
           */}
+      <div
+        className={`fixed top-0 left-0 w-full h-screen bg-[#ffffff] dark:bg-[#333333] transition-transform duration-300 ease-out ${
+          chatSelected ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         {chatSelected && (
-          <div className="flex-1 ml-3 mt-2">
-            <ChatRoom room={chatSelected} />
+          <div className="">
+            <ChatRoom room={chatSelected} onClick={() => setChatSelected('')} />
           </div>
         )}
       </div>
