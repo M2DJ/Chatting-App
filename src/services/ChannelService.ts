@@ -2,7 +2,7 @@ import { supabase } from "./SupabaseClient";
 
 class ChannelService {
   async lookUpUsers(userName: string) {
-    const isEmail = userName.includes("@") && userName.includes('.');
+    const isEmail = userName.includes("@");
 
     try {
       const { data, error } = await supabase

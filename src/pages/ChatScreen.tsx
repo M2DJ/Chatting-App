@@ -258,7 +258,7 @@ const ChatScreen = () => {
                   <>
                     {searchedUsers.length == 0 &&
                     hasSearched.current == true ? (
-                      <p>No Matches Found</p>
+                      <p className="flex justify-center text-[clamp(16px,1.8vw,180px)] text-text-light dark:text-text-dark">No Matches Found</p>
                     ) : (
                       searchedUsers.map((user, index) => (
                         <div key={index}>
