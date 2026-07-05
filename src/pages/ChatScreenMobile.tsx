@@ -9,7 +9,6 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { authService } from "../services/AuthService";
 import { useTheme } from "../context/ThemeContext";
 import ChatRoom from "../components/ChatRoom";
-import { IoMdChatbubbles } from "react-icons/io";
 import { channelService } from "../services/ChannelService";
 import type { SearchedUsers } from "../interfaces/SupabaseInterface";
 import ChatCardSearch from "../components/ChatCardSearch";
@@ -20,7 +19,7 @@ const ChatScreenMobile = () => {
   );
 
   //Chat state
-  const [chatSelected, setChatSelected] = useState("");
+  const [chatSelected, setChatSelected] = useState("1");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
   const hasSearched = useRef(false);
@@ -272,7 +271,7 @@ const ChatScreenMobile = () => {
         }`}
       >
         {chatSelected && (
-          <div className="">
+          <div className="h-full">
             <ChatRoom room={chatSelected} onClick={() => setChatSelected('')} />
           </div>
         )}

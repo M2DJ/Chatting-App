@@ -21,7 +21,7 @@ const ChatScreen = () => {
   );
 
   //Chat state
-  const [chatSelected, setChatSelected] = useState("");
+  const [chatSelected, setChatSelected] = useState("1");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
   const hasSearched = useRef(false);
@@ -285,8 +285,8 @@ const ChatScreen = () => {
           */}
           <div className="flex-1 ml-3 mt-2">
             {chatSelected ? (
-              <div>
-                <ChatRoom room={chatSelected} />
+              <div className="h-full">
+                <ChatRoom room={chatSelected}/>
               </div>
             ) : (
               <div className="h-full flex flex-col justify-center items-center">
