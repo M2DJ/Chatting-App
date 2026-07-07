@@ -19,7 +19,7 @@ const ChatScreenMobile = () => {
   );
 
   //Chat state
-  const [chatSelected, setChatSelected] = useState("1");
+  const [chatSelected, setChatSelected] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
   const hasSearched = useRef(false);

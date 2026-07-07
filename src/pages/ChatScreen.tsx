@@ -21,7 +21,7 @@ const ChatScreen = () => {
   );
 
   //Chat state
-  const [chatSelected, setChatSelected] = useState("1");
+  const [chatSelected, setChatSelected] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
   const hasSearched = useRef(false);
@@ -295,7 +295,7 @@ const ChatScreen = () => {
                   color={isDarkMode ? "#ffffff" : "#000000"}
                 />
                 <p className="text-[clamp(15px,2vw,200px)] text-text-light dark:text-text-dark">
-                  Choos a room to start chatting!
+                  Choose a room to start chatting!
                 </p>
               </div>
             )}
