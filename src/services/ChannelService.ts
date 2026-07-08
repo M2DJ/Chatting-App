@@ -1,5 +1,6 @@
-import { data } from "react-router-dom";
+import { error } from "console";
 import { supabase } from "./SupabaseClient";
+import { data } from "react-router-dom";
 
 class ChannelService {
   async lookUpUsers(userName: string) {
@@ -45,11 +46,18 @@ class ChannelService {
     }
   }
 
-  async addRoomParticipant(userId: string, channelId: string) {
+  async addRoomParticipant(
+    userId: string,
+    userEmail: string,
+    channelId: string,
+    userName?: string,
+  ) {
     try {
       const { error } = await supabase.from("RoomParticipants").insert({
         user_id: userId,
         channel_id: channelId,
+        user_email: userEmail,
+        user_name: userName ?? null,
       });
 
       if (error) {
@@ -80,6 +88,41 @@ class ChannelService {
       return { success: true, data: null, error: null };
     } catch (e) {
       console.error("Error occured saving message: ", e);
+      return { success: false, data: null, error: e };
+    }
+  }
+
+  async loadRooms() {
+    try {
+      const { data: rooms, error: roomError } = await supabase
+        .from("Rooms")
+        .select("channel_id");
+
+      if (roomError) {
+        console.log("Error fetching rooms: ", roomError.message);
+        return { success: false, data: null, error: roomError.message };
+      }
+
+      const { data: roomParticipants, error: errorRoomParticipants } =
+        await supabase
+          .from("RoomParticipants")
+          .select("user_id,user_email,user_name");
+
+      if (errorRoomParticipants) {
+        console.log(
+          "Error fetching room participants: ",
+          errorRoomParticipants.message,
+        );
+        return {
+          success: false,
+          data: null,
+          error: errorRoomParticipants.message,
+        };
+      }
+
+      return { success: true, data: { rooms, roomParticipants }, error: null };
+    } catch (e) {
+      console.error("Error occured while fetching rooms: ", e);
       return { success: false, data: null, error: e };
     }
   }
