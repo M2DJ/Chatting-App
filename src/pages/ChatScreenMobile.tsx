@@ -22,6 +22,7 @@ const ChatScreenMobile = () => {
   const [chatSelected, setChatSelected] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
+  const [userSelected, setUserSelected] = useState<SearchedUsers>();
   const hasSearched = useRef(false);
 
   //Loading state
@@ -243,7 +244,14 @@ const ChatScreenMobile = () => {
                   </p>
                 ) : (
                   searchedUsers.map((user, index) => (
-                    <div key={index} onClick={() => setChatSelected("1")}>
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setChatSelected("1");
+
+                        setUserSelected(user);
+                      }}
+                    >
                       <ChatCardSearch
                         userName={
                           user.user_name != null
@@ -272,7 +280,11 @@ const ChatScreenMobile = () => {
       >
         {chatSelected && (
           <div className="h-full">
-            <ChatRoom room={chatSelected} onClick={() => setChatSelected('')} />
+            <ChatRoom
+              room={chatSelected}
+              onClick={() => setChatSelected("")}
+              participant={userSelected}
+            />
           </div>
         )}
       </div>

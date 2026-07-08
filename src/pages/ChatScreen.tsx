@@ -298,11 +298,7 @@ const ChatScreen = () => {
               <div className="h-full">
                 <ChatRoom
                   room={chatSelected}
-                  userName={
-                    userSelected!.user_name != null
-                      ? userSelected!.user_name
-                      : userSelected!.user_email
-                  }
+                  participant={userSelected}
                 />
               </div>
             ) : (

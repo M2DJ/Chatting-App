@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import type { ChatRoomProps } from "../interfaces/ComponentsInterface";
 import { IoPerson, IoSend, IoChevronBack } from "react-icons/io5";
+import { channelService } from "../services/ChannelService";
+import { authService } from "../services/AuthService";
 
-const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
+const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
@@ -18,6 +20,49 @@ const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
     };
   }, []);
 
+  //Message state
+  const [newMessage, setNewMessage] = useState("");
+
+  const hasSentMessage = useRef(false);
+
+  const handleSendingMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (hasSentMessage.current) {
+      try {
+        const { data: user } = await authService.currentSession();
+
+        const { success, error } = await channelService.createRoom(
+          user?.session?.user.id!,
+          participant?.user_id!,
+          participant?.user_email!,
+        );
+
+        if (success) {
+          try {
+            const { error: newMessageError } = await channelService.saveMessage(
+              room,
+              user?.session?.user.id!,
+              newMessage,
+            );
+
+            if (newMessageError) {
+              console.log(
+                "Error saving message in 'ChatRoom' component: ",
+                newMessage,
+              );
+            }
+          } catch (e) {
+            console.error("Error saving message in 'ChatRoom' component: ", e);
+          }
+        } else if (error) {
+          console.log("Error creating room in 'ChatRoom' component: ", error);
+        }
+      } catch (e) {
+        console.error('Error creating room in "ChatRoom" component: ', e);
+      }
+    }
+  };
+
   if (width <= 450) {
     return (
       <div className="h-full py-2 flex flex-col">
@@ -29,14 +74,19 @@ const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
         <div className="flex items-center">
           {onClick && (
             <div onClick={onClick} className="mr-1">
-              <IoChevronBack size="7vw" color={isDarkMode ? "#ffffff" : "#000000"} />
+              <IoChevronBack
+                size="7vw"
+                color={isDarkMode ? "#ffffff" : "#000000"}
+              />
             </div>
           )}
           <div className="w-[10vw] h-[10vw] border border-black/55 dark:border-white/50 rounded-full flex items-center justify-center">
             <IoPerson size="7vw" color="#999393" />
           </div>
           <p className="ml-1 text-text-light dark:text-text-dark text-[clamp(16px,1.7vw,170px)]">
-            {userName}
+            {participant?.user_name == null
+              ? participant?.user_email
+              : participant.user_name}
           </p>
         </div>
         <div className="mt-2 mx-2 border border-black/55 dark:border-white/40" />
@@ -45,13 +95,22 @@ const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
         <div className="grow-2"></div>
 
         {/* Input message part */}
-        <div className="flex items-center px-1">
-          <form className="grow-2">
-            <input className="w-full h-[8vw] pl-1 border border-black/60 rounded-xl bg-input-light" />
+        <div className="">
+          <form
+            className="flex items-center px-1"
+            onSubmit={handleSendingMessage}
+          >
+            <input
+              onChange={(e) => {
+                hasSentMessage.current = true;
+                setNewMessage(e.target.value);
+              }}
+              className="w-full h-[8vw] pl-1 border border-black/60 rounded-xl bg-input-light"
+            />
+            <div className="w-[9vw] h-[9vw] ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center">
+              <IoSend size="4vw" />
+            </div>
           </form>
-          <div className="w-[9vw] h-[9vw] ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center">
-            <IoSend size="4vw" />
-          </div>
         </div>
       </div>
     );
@@ -73,7 +132,9 @@ const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
             <IoPerson size="3vw" color="#999393" />
           </div>
           <p className="ml-1 text-text-light dark:text-text-dark text-[clamp(16px,1.7vw,170px)]">
-            {userName}
+            {participant?.user_name == null
+              ? participant?.user_email
+              : participant.user_name}
           </p>
         </div>
         <div className="mt-2 border border-black/55 dark:border-white/40" />
@@ -82,13 +143,25 @@ const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
         <div className="grow-2"></div>
 
         {/* Input message part */}
-        <div className="flex items-center">
-          <form className="grow-2">
-            <input className="w-full h-[3vw] pl-1 border border-black/60 rounded-xl bg-input-light" />
+        <div className="">
+          <form
+            className="flex justify-center items-center"
+            onSubmit={handleSendingMessage}
+          >
+            <input
+              onChange={(e) => {
+                hasSentMessage.current = true;
+                setNewMessage(e.target.value);
+              }}
+              className="w-full h-[3vw] pl-1 border border-black/60 rounded-xl bg-input-light grow-2"
+            />
+            <button
+              type="submit"
+              className="w-[3vw] h-[3vw] min-w-7 min-h-7 ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center"
+            >
+              <IoSend size="1.7vw" />
+            </button>
           </form>
-          <div className="w-[3vw] h-[3vw] min-w-7 min-h-7 ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center">
-            <IoSend size="1.7vw" />
-          </div>
         </div>
       </div>
     );

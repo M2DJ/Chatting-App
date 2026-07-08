@@ -7,7 +7,7 @@ class ChannelService {
     try {
       const { data, error } = await supabase
         .from("UsersPublic")
-        .select("user_email, user_name")
+        .select("user_id, user_email, user_name")
         .ilike(isEmail ? "user_email" : "user_name", `%${userName}%`);
 
       if (error) {
@@ -21,30 +21,7 @@ class ChannelService {
     }
   }
 
-  //This function takes the user id from Supabase
-  async createRoom(roomCreator: string, roomName?: string) {
-    try {
-      const { data, error } = await supabase
-        .from("Rooms")
-        .insert({
-          channel_creator: roomCreator,
-          channel_name: roomName ?? null,
-        })
-        .select();
-
-      if (error) {
-        console.log("Error occured: ", error.message);
-        return { success: false, data: null, error: error.message };
-      }
-
-      return { success: true, data: data, error: null };
-    } catch (e) {
-      console.error("Error occured while creating room: ", e);
-      return { success: false, data: null, error: e };
-    }
-  }
-
-  async addRoomParticipant(
+  private async addRoomParticipant(
     userId: string,
     userEmail: string,
     channelId: string,
@@ -66,6 +43,50 @@ class ChannelService {
       return { success: true, data: null, error: null };
     } catch (e) {
       console.log("Error occured while adding room participant: ", e);
+      return { success: false, data: null, error: e };
+    }
+  }
+
+  //This function takes the user id from Supabase
+  async createRoom(
+    roomCreator: string,
+    participantId: string,
+    participantEmail: string,
+    roomName?: string,
+  ) {
+    try {
+      const { data: createdRoom, error } = await supabase
+        .from("Rooms")
+        .insert({
+          channel_creator: roomCreator,
+          channel_name: roomName ?? null,
+        })
+        .select();
+
+      if (error) {
+        console.log("Error occured: ", error.message);
+        return { success: false, data: null, error: error.message };
+      } else {
+        try {
+          const { error: roomParticipantError } = await this.addRoomParticipant(
+            participantId,
+            participantEmail,
+            createdRoom![0].channel_id,
+          );
+
+          if (roomParticipantError) {
+            console.log("Error occured: ", roomParticipantError);
+            return { success: false, data: null, error: roomParticipantError };
+          }
+
+          return { success: true, data: null, error: null };
+        } catch (e) {
+          console.error('Error adding user to "RoomParticipants" table: ', e);
+          return { success: false, data: null, error: e };
+        }
+      }
+    } catch (e) {
+      console.error("Error occured while creating room: ", e);
       return { success: false, data: null, error: e };
     }
   }

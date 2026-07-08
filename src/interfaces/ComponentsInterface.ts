@@ -1,3 +1,5 @@
+import type { SearchedUsers } from "./SupabaseInterface";
+
 export interface ChatCardProps{
     roomId: string;
     chatterAvatarURL: string;
@@ -13,5 +15,5 @@ export interface ChatCardSearchProps{
 export interface ChatRoomProps{
     onClick?: () => void;
     room: string;
-    userName: string;
+    participant: SearchedUsers | undefined;
 }
