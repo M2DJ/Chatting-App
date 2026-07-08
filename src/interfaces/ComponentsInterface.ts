@@ -13,4 +13,5 @@ export interface ChatCardSearchProps{
 export interface ChatRoomProps{
     onClick?: () => void;
     room: string;
+    userName: string;
 }

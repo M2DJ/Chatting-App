@@ -1,6 +1,4 @@
-import { error } from "console";
 import { supabase } from "./SupabaseClient";
-import { data } from "react-router-dom";
 
 class ChannelService {
   async lookUpUsers(userName: string) {

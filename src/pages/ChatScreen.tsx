@@ -24,6 +24,7 @@ const ChatScreen = () => {
   const [chatSelected, setChatSelected] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
+  const [userSelected, setUserSelected] = useState<SearchedUsers>();
   const hasSearched = useRef(false);
 
   //loading state
@@ -258,10 +259,19 @@ const ChatScreen = () => {
                   <>
                     {searchedUsers.length == 0 &&
                     hasSearched.current == true ? (
-                      <p className="flex justify-center text-[clamp(16px,1.8vw,180px)] text-text-light dark:text-text-dark">No Matches Found</p>
+                      <p className="flex justify-center text-[clamp(16px,1.8vw,180px)] text-text-light dark:text-text-dark">
+                        No Matches Found
+                      </p>
                     ) : (
                       searchedUsers.map((user, index) => (
-                        <div key={index} onClick={() => setChatSelected('1')}>
+                        <div
+                          key={index}
+                          onClick={() => {
+                            setChatSelected("1");
+
+                            setUserSelected(user);
+                          }}
+                        >
                           <ChatCardSearch
                             userName={
                               user.user_name != null
@@ -286,7 +296,14 @@ const ChatScreen = () => {
           <div className="flex-1 ml-3 mt-2">
             {chatSelected ? (
               <div className="h-full">
-                <ChatRoom room={chatSelected}/>
+                <ChatRoom
+                  room={chatSelected}
+                  userName={
+                    userSelected!.user_name != null
+                      ? userSelected!.user_name
+                      : userSelected!.user_email
+                  }
+                />
               </div>
             ) : (
               <div className="h-full flex flex-col justify-center items-center">

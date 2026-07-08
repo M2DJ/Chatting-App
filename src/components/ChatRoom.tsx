@@ -3,7 +3,7 @@ import { useTheme } from "../context/ThemeContext";
 import type { ChatRoomProps } from "../interfaces/ComponentsInterface";
 import { IoPerson, IoSend, IoChevronBack } from "react-icons/io5";
 
-const ChatRoom = ({ room, onClick }: ChatRoomProps) => {
+const ChatRoom = ({ room, userName, onClick }: ChatRoomProps) => {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
@@ -36,7 +36,7 @@ const ChatRoom = ({ room, onClick }: ChatRoomProps) => {
             <IoPerson size="7vw" color="#999393" />
           </div>
           <p className="ml-1 text-text-light dark:text-text-dark text-[clamp(16px,1.7vw,170px)]">
-            Chatter Name
+            {userName}
           </p>
         </div>
         <div className="mt-2 mx-2 border border-black/55 dark:border-white/40" />
@@ -73,7 +73,7 @@ const ChatRoom = ({ room, onClick }: ChatRoomProps) => {
             <IoPerson size="3vw" color="#999393" />
           </div>
           <p className="ml-1 text-text-light dark:text-text-dark text-[clamp(16px,1.7vw,170px)]">
-            Chatter Name
+            {userName}
           </p>
         </div>
         <div className="mt-2 border border-black/55 dark:border-white/40" />
