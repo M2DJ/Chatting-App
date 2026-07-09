@@ -17,3 +17,9 @@ export interface ChatRoomProps{
     room: string;
     participant: SearchedUsers | undefined;
 }
+
+export interface MessagesProps{
+    content: string;
+    time: Date;
+    isLoading: boolean;
+}

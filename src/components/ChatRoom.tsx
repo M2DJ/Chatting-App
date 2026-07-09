@@ -21,46 +21,53 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   }, []);
 
   //Message state
-  const [newMessage, setNewMessage] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [newMessage, setNewMessage] = useState<string[]>([]);
 
   const hasSentMessage = useRef(false);
 
   const handleSendingMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (hasSentMessage.current) {
-      try {
-        const { data: user } = await authService.currentSession();
 
-        const { success, error } = await channelService.createRoom(
-          user?.session?.user.id!,
-          participant?.user_id!,
-          participant?.user_email!,
-        );
+    if (!inputValue.trim()) return;
 
-        if (success) {
-          try {
-            const { error: newMessageError } = await channelService.saveMessage(
-              room,
-              user?.session?.user.id!,
-              newMessage,
-            );
+    setNewMessage((prevMessages) => [...prevMessages, inputValue]);
+    // if (hasSentMessage.current) {
+    //   try {
+    //     const { data: user } = await authService.currentSession();
 
-            if (newMessageError) {
-              console.log(
-                "Error saving message in 'ChatRoom' component: ",
-                newMessage,
-              );
-            }
-          } catch (e) {
-            console.error("Error saving message in 'ChatRoom' component: ", e);
-          }
-        } else if (error) {
-          console.log("Error creating room in 'ChatRoom' component: ", error);
-        }
-      } catch (e) {
-        console.error('Error creating room in "ChatRoom" component: ', e);
-      }
-    }
+    //     const { success, error } = await channelService.createRoom(
+    //       user?.session?.user.id!,
+    //       participant?.user_id!,
+    //       participant?.user_email!,
+    //     );
+
+    //     if (success) {
+    //       try {
+    //         const { error: newMessageError } = await channelService.saveMessage(
+    //           room,
+    //           user?.session?.user.id!,
+    //           newMessage,
+    //         );
+
+    //         if (newMessageError) {
+    //           console.log(
+    //             "Error saving message in 'ChatRoom' component: ",
+    //             newMessage,
+    //           );
+    //         }
+    //       } catch (e) {
+    //         console.error("Error saving message in 'ChatRoom' component: ", e);
+    //       }
+    //     } else if (error) {
+    //       console.log("Error creating room in 'ChatRoom' component: ", error);
+    //     }
+    //   } catch (e) {
+    //     console.error('Error creating room in "ChatRoom" component: ', e);
+    //   }
+    // }
+
+    setInputValue("");
   };
 
   if (width <= 450) {
@@ -92,7 +99,14 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
         <div className="mt-2 mx-2 border border-black/55 dark:border-white/40" />
 
         {/* The messages part of the chat */}
-        <div className="grow-2"></div>
+        <div className="grow-2">
+          {/*
+          
+          How the text message will look
+          
+          */}
+          <div className="">{newMessage}</div>
+        </div>
 
         {/* Input message part */}
         <div className="">
@@ -101,13 +115,15 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
             onSubmit={handleSendingMessage}
           >
             <input
+              value={inputValue}
               onChange={(e) => {
                 hasSentMessage.current = true;
-                setNewMessage(e.target.value);
+                setInputValue(e.target.value);
               }}
-              className="w-full h-[8vw] pl-1 border border-black/60 rounded-xl bg-input-light"
+              type="text"
+              className="focus:outline-none w-full h-[8vw] pl-1 border border-black/60 rounded-xl bg-input-light"
             />
-            <div className="w-[9vw] h-[9vw] ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center">
+            <div className="cursor-pointer w-[9vw] h-[9vw] ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center">
               <IoSend size="4vw" />
             </div>
           </form>
@@ -140,7 +156,23 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
         <div className="mt-2 border border-black/55 dark:border-white/40" />
 
         {/* The messages part of the chat */}
-        <div className="grow-2"></div>
+        <div className="grow-2">
+          {/*
+          
+          How the text message will look
+          
+          */}
+          <div className="">
+            {newMessage.map((msg, index) => (
+              <p
+                key={index}
+                className={`mt-2 bg-[#BDBDBD] max-w-[40vw] h-fit p-1 rounded-l-xl rounded-br-xl break-all whitespace-pre-wrap`}
+              >
+                {msg}
+              </p>
+            ))}
+          </div>
+        </div>
 
         {/* Input message part */}
         <div className="">
@@ -149,16 +181,15 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
             onSubmit={handleSendingMessage}
           >
             <input
+              value={inputValue}
               onChange={(e) => {
                 hasSentMessage.current = true;
-                setNewMessage(e.target.value);
+                setInputValue(e.target.value);
               }}
-              className="w-full h-[3vw] pl-1 border border-black/60 rounded-xl bg-input-light grow-2"
+              type="text"
+              className="focus:outline-none w-full h-[3vw] pl-1 border border-black/60 rounded-xl bg-input-light grow-2"
             />
-            <button
-              type="submit"
-              className="w-[3vw] h-[3vw] min-w-7 min-h-7 ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center"
-            >
+            <button className="cursor-pointer w-[3vw] h-[3vw] min-w-7 min-h-7 ml-1 border border-black/55 rounded-full bg-input-light flex justify-center items-center">
               <IoSend size="1.7vw" />
             </button>
           </form>
