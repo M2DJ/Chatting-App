@@ -137,26 +137,28 @@ class ChannelService {
   }
 
   subscribeToRoomsTable(onNewRoom: (payload: any) => void) {
-    try{
+    try {
       const subToRooms = supabase
-      .channel('table_db_changes')
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "Rooms",
-        },
-        (payload) => {
-          onNewRoom(payload);
-        }
-      )
-      .subscribe();
+        .channel("table_db_changes")
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "Rooms",
+          },
+          (payload) => {
+            onNewRoom(payload.new);
+          },
+        )
+        .subscribe();
 
-      return subToRooms;
-    } catch(e) {
+      return () => {
+        supabase.removeChannel(subToRooms);
+      };
+    } catch (e) {
       console.error("Error subscribing to the 'Rooms' table: ", e);
-      return null
+      return () => {};
     }
   }
 

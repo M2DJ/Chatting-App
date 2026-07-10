@@ -14,6 +14,7 @@ import ChatRoom from "../components/ChatRoom";
 import ChatCardSearch from "../components/ChatCardSearch";
 import type { SearchedUsers } from "../interfaces/SupabaseInterface";
 import { channelService } from "../services/ChannelService";
+import type { ChatCardProps } from "../interfaces/ComponentsInterface";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
@@ -21,6 +22,7 @@ const ChatScreen = () => {
   );
 
   //Chat state
+  const [chats, setChats] = useState<ChatCardProps>();
   const [chatSelected, setChatSelected] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
@@ -40,6 +42,15 @@ const ChatScreen = () => {
   //Theme hook
   const { isDarkMode, toggleDarkMode } = useTheme();
 
+  //useEffect for re-sizing the window
+  useEffect(() => {
+    window.addEventListener("resize", () => setWidth(window.innerWidth));
+
+    return () => {
+      window.removeEventListener("resize", () => setWidth(window.innerWidth));
+    };
+  }, []);
+
   //useEffect for the dropdown menu
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -55,15 +66,6 @@ const ChatScreen = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
-  //useEffect for re-sizing the window
-  useEffect(() => {
-    window.addEventListener("resize", () => setWidth(window.innerWidth));
-
-    return () => {
-      window.removeEventListener("resize", () => setWidth(window.innerWidth));
     };
   }, []);
 
@@ -93,6 +95,18 @@ const ChatScreen = () => {
 
     checkSession();
   }, [navigate]);
+
+  //useEffect to subscribe for when the user creates a new room
+  useEffect(() => {
+    const unSub = channelService.subscribeToRoomsTable((payload) => {
+      console.log("New room inserted in the 'Rooms' table", payload);
+      setChatSelected(payload.channel_id);
+    });
+
+    return () => {
+      unSub();
+    };
+  }, []);
 
   //Function for logging out
   const handleLogout = async () => {
@@ -266,8 +280,6 @@ const ChatScreen = () => {
                         <div
                           key={index}
                           onClick={() => {
-                            setChatSelected("1");
-
                             setUserSelected(user);
                           }}
                         >
@@ -295,10 +307,7 @@ const ChatScreen = () => {
           <div className="flex-1 ml-3 mt-2">
             {chatSelected ? (
               <div className="h-full">
-                <ChatRoom
-                  room={chatSelected}
-                  participant={userSelected}
-                />
+                <ChatRoom room={chatSelected} participant={userSelected} />
               </div>
             ) : (
               <div className="h-full flex flex-col justify-center items-center">
