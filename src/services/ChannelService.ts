@@ -58,7 +58,7 @@ class ChannelService {
       const { data: createdRoom, error } = await supabase
         .from("Rooms")
         .insert({
-          channel_creator: roomCreator,
+          channel_creater: roomCreator,
           channel_name: roomName ?? null,
         })
         .select();

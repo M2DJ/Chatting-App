@@ -4,6 +4,7 @@ import type { ChatRoomProps } from "../interfaces/ComponentsInterface";
 import { IoPerson, IoSend, IoChevronBack } from "react-icons/io5";
 import { channelService } from "../services/ChannelService";
 import { authService } from "../services/AuthService";
+import type { Session } from "@supabase/supabase-js";
 
 const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   const [width, setWidth] = useState(
@@ -23,8 +24,26 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   //Message state
   const [inputValue, setInputValue] = useState("");
   const [newMessage, setNewMessage] = useState<string[]>([]);
+  const [user, setUser] = useState<Session | null>(null);
 
   const hasSentMessage = useRef(false);
+
+  //useEffect for getting the user session
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { success, data } = await authService.currentSession();
+
+        if (success) {
+          setUser(data!.session);
+        }
+      } catch (e) {
+        console.error('Failed fetching user session: ', e);
+      }
+    };
+
+    getUser();
+  }, []);
 
   const handleSendingMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,41 +51,40 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
     if (!inputValue.trim()) return;
 
     setNewMessage((prevMessages) => [...prevMessages, inputValue]);
-    // if (hasSentMessage.current) {
-    //   try {
-    //     const { data: user } = await authService.currentSession();
+    if (hasSentMessage.current) {
+      try {
+        const { success, error } = await channelService.createRoom(
+          user?.user.id!,
+          participant?.user_id!,
+          participant?.user_email!,
+        );
 
-    //     const { success, error } = await channelService.createRoom(
-    //       user?.session?.user.id!,
-    //       participant?.user_id!,
-    //       participant?.user_email!,
-    //     );
+        if (success) {
+          try {
+            const { error: newMessageError } = await channelService.saveMessage(
+              room,
+              user?.user.id!,
+              newMessage[newMessage.length - 1],
+            );
 
-    //     if (success) {
-    //       try {
-    //         const { error: newMessageError } = await channelService.saveMessage(
-    //           room,
-    //           user?.session?.user.id!,
-    //           newMessage,
-    //         );
+            if (newMessageError) {
+              console.log(
+                "Error saving message in 'ChatRoom' component: ",
+                newMessage,
+              );
+            }
+          } catch (e) {
+            console.error("Error saving message in 'ChatRoom' component: ", e);
+          }
+        } else if (error) {
+          console.log("Error creating room in 'ChatRoom' component: ", error);
+        }
+      } catch (e) {
+        console.error('Error creating room in "ChatRoom" component: ', e);
+      }
+    }
 
-    //         if (newMessageError) {
-    //           console.log(
-    //             "Error saving message in 'ChatRoom' component: ",
-    //             newMessage,
-    //           );
-    //         }
-    //       } catch (e) {
-    //         console.error("Error saving message in 'ChatRoom' component: ", e);
-    //       }
-    //     } else if (error) {
-    //       console.log("Error creating room in 'ChatRoom' component: ", error);
-    //     }
-    //   } catch (e) {
-    //     console.error('Error creating room in "ChatRoom" component: ', e);
-    //   }
-    // }
-
+    console.log("Message saved successfuly");
     setInputValue("");
   };
 
