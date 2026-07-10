@@ -47,11 +47,33 @@ class ChannelService {
     }
   }
 
+  async saveMessage(channelId: string, senderId: string, message: string) {
+    try {
+      const { error } = await supabase.from("ChatMessages").insert({
+        channel_id: channelId,
+        sender_id: senderId,
+        message: message,
+      });
+
+      if (error) {
+        console.log("Error occured: ", error.message);
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data: null, error: null };
+    } catch (e) {
+      console.error("Error occured saving message: ", e);
+      return { success: false, data: null, error: e };
+    }
+  }
+
   //This function takes the user id from Supabase
   async createRoom(
     roomCreator: string,
     participantId: string,
     participantEmail: string,
+    senderId: string,
+    message: string,
     roomName?: string,
   ) {
     try {
@@ -79,6 +101,29 @@ class ChannelService {
             return { success: false, data: null, error: roomParticipantError };
           }
 
+          try {
+            const { error: saveFirstMessageError } = await this.saveMessage(
+              createdRoom[0].channel_id,
+              senderId,
+              message,
+            );
+
+            if (saveFirstMessageError) {
+              console.log("Error occured: ", saveFirstMessageError);
+              return {
+                success: false,
+                data: null,
+                error: saveFirstMessageError,
+              };
+            }
+          } catch (e) {
+            console.error(
+              'Error saving first message in "ChatMessages" table: ',
+              e,
+            );
+            return { success: false, data: null, error: e };
+          }
+
           return { success: true, data: null, error: null };
         } catch (e) {
           console.error('Error adding user to "RoomParticipants" table: ', e);
@@ -87,26 +132,6 @@ class ChannelService {
       }
     } catch (e) {
       console.error("Error occured while creating room: ", e);
-      return { success: false, data: null, error: e };
-    }
-  }
-
-  async saveMessage(channelId: string, senderId: string, message: string) {
-    try {
-      const { error } = await supabase.from("ChatMessages").insert({
-        channel_id: channelId,
-        sender_id: senderId,
-        message: message,
-      });
-
-      if (error) {
-        console.log("Error occured: ", error.message);
-        return { success: false, data: null, error: error.message };
-      }
-
-      return { success: true, data: null, error: null };
-    } catch (e) {
-      console.error("Error occured saving message: ", e);
       return { success: false, data: null, error: e };
     }
   }

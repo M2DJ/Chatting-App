@@ -128,7 +128,6 @@ const ChatScreen = () => {
       }
 
       setSearchedUsers(users!);
-      console.log(searchedUsers);
       hasSearched.current = true;
     } catch (e: any) {
       console.error("Error searching for users: ", e);

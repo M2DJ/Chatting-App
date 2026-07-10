@@ -38,7 +38,7 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
           setUser(data!.session);
         }
       } catch (e) {
-        console.error('Failed fetching user session: ', e);
+        console.error("Failed fetching user session: ", e);
       }
     };
 
@@ -48,43 +48,31 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   const handleSendingMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!inputValue.trim()) return;
+    let newestMessage = inputValue.trim();
+    if (!newestMessage) return;
 
-    setNewMessage((prevMessages) => [...prevMessages, inputValue]);
+    setNewMessage((prevMessages) => [...prevMessages, newestMessage]);
+
     if (hasSentMessage.current) {
       try {
-        const { success, error } = await channelService.createRoom(
+        const { error } = await channelService.createRoom(
           user?.user.id!,
           participant?.user_id!,
           participant?.user_email!,
+          user?.user.id!,
+          newestMessage,
         );
 
-        if (success) {
-          try {
-            const { error: newMessageError } = await channelService.saveMessage(
-              room,
-              user?.user.id!,
-              newMessage[newMessage.length - 1],
-            );
-
-            if (newMessageError) {
-              console.log(
-                "Error saving message in 'ChatRoom' component: ",
-                newMessage,
-              );
-            }
-          } catch (e) {
-            console.error("Error saving message in 'ChatRoom' component: ", e);
-          }
-        } else if (error) {
-          console.log("Error creating room in 'ChatRoom' component: ", error);
+        if (error) {
+          console.error("Error occured in the 'ChatRoom' component: ", error);
         }
+
+        console.log("Message saved successfuly");
       } catch (e) {
         console.error('Error creating room in "ChatRoom" component: ', e);
       }
     }
 
-    console.log("Message saved successfuly");
     setInputValue("");
   };
 
