@@ -14,7 +14,6 @@ import ChatRoom from "../components/ChatRoom";
 import ChatCardSearch from "../components/ChatCardSearch";
 import type { SearchedUsers } from "../interfaces/SupabaseInterface";
 import { channelService } from "../services/ChannelService";
-import type { ChatCardProps } from "../interfaces/ComponentsInterface";
 import type { Session } from "@supabase/supabase-js";
 
 const ChatScreen = () => {
@@ -26,7 +25,7 @@ const ChatScreen = () => {
   const [userSession, setUserSession] = useState<Session | null>(null);
 
   //Chat state
-  const [chats, setChats] = useState<ChatCardProps>();
+  const [chats, setChats] = useState({});
   const [chatSelected, setChatSelected] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
@@ -45,33 +44,6 @@ const ChatScreen = () => {
   const hasAlerted = useRef(false);
   //Theme hook
   const { isDarkMode, toggleDarkMode } = useTheme();
-
-  //useEffect for re-sizing the window
-  useEffect(() => {
-    window.addEventListener("resize", () => setWidth(window.innerWidth));
-
-    return () => {
-      window.removeEventListener("resize", () => setWidth(window.innerWidth));
-    };
-  }, []);
-
-  //useEffect for the dropdown menu
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e?.target as Node)
-      ) {
-        setIsProfileSettingsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
 
   //useEffect for when there is no session
   useEffect(() => {
@@ -102,12 +74,60 @@ const ChatScreen = () => {
     checkSession();
   }, [navigate]);
 
+  //useEffect for re-sizing the window
+  useEffect(() => {
+    window.addEventListener("resize", () => setWidth(window.innerWidth));
+
+    return () => {
+      window.removeEventListener("resize", () => setWidth(window.innerWidth));
+    };
+  }, []);
+
+  //useEffect for the dropdown menu
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e?.target as Node)
+      ) {
+        setIsProfileSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   //useEffect to subscribe for when the user creates a new room
   useEffect(() => {
-    const unSub = channelService.subscribeToRoomsTable(userSession?.user.id!, (payload) => {
-      console.log("New room inserted in the 'Rooms' table", payload);
-      setChatSelected(payload.channel_id);
-    });
+    const fetchRoomsOnChange = async () => {
+      try {
+        const { success, data, error } = await channelService.loadRooms(
+          userSession?.user.id!,
+        );
+        if (success && data) {
+          setChats(data);
+        } else {
+          console.log("Error occured in the 'ChatScreen' component: ", error);
+        }
+      } catch (e) {
+        console.error("Error occured in the 'ChatScreen' component: ", e);
+      }
+    };
+
+    fetchRoomsOnChange();
+
+    const unSub = channelService.subscribeToRoomsTable(
+      userSession?.user.id!,
+      (payload) => {
+        console.log("New room inserted in the 'Rooms' table", payload);
+        setChatSelected(payload.channel_id);
+        fetchRoomsOnChange();
+      },
+    );
 
     return () => {
       unSub();

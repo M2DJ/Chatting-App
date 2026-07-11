@@ -12,11 +12,15 @@ import ChatRoom from "../components/ChatRoom";
 import { channelService } from "../services/ChannelService";
 import type { SearchedUsers } from "../interfaces/SupabaseInterface";
 import ChatCardSearch from "../components/ChatCardSearch";
+import type { Session } from "@supabase/supabase-js";
 
 const ChatScreenMobile = () => {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
+
+  //User state
+  const [userSession, setUserSession] = useState<Session>();
 
   //Chat state
   const [chatSelected, setChatSelected] = useState("");
@@ -38,6 +42,15 @@ const ChatScreenMobile = () => {
   //Theme hook
   const { isDarkMode, toggleDarkMode } = useTheme();
 
+  //useEffect for the window re-sizing
+  useEffect(() => {
+    window.addEventListener("resize", () => setWidth(window.innerWidth));
+
+    return () => {
+      window.removeEventListener("resize", () => setWidth(window.innerWidth));
+    };
+  }, []);
+
   //useEffect for the dropdown menu
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -53,15 +66,6 @@ const ChatScreenMobile = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, []);
-
-  //useEffect for the window re-sizing
-  useEffect(() => {
-    window.addEventListener("resize", () => setWidth(window.innerWidth));
-
-    return () => {
-      window.removeEventListener("resize", () => setWidth(window.innerWidth));
     };
   }, []);
 
@@ -81,6 +85,8 @@ const ChatScreenMobile = () => {
             alert("You must have an account to chat");
           }
           navigate("/login", { replace: true });
+        } else {
+          setUserSession(data.session);
         }
       } catch (e: any) {
         console.error("Error: ", e);
@@ -91,6 +97,26 @@ const ChatScreenMobile = () => {
 
     checkSession();
   }, [navigate]);
+
+  //useEffect to subscribe for when the user creates a new room
+  useEffect(() => {
+    const unSub = channelService.subscribeToRoomsTable(
+      userSession?.user.id!,
+      (payload) => {
+        console.log("New room inserted in the 'Rooms' table", payload);
+        setChatSelected(payload.channel_id);
+      },
+    );
+
+    return () => {
+      unSub();
+    };
+  }, []);
+
+  //useEffect for fetching the user chats
+  useEffect(() => {
+    
+  })
 
   const handleLogout = async () => {
     try {

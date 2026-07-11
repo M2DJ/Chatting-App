@@ -146,7 +146,7 @@ class ChannelService {
             event: "INSERT",
             schema: "public",
             table: "Rooms",
-            filter: `channel_creater=eq.${userId}`
+            filter: `channel_creater=eq.${userId}`,
           },
           (payload) => {
             onNewRoom(payload.new);
@@ -163,35 +163,49 @@ class ChannelService {
     }
   }
 
-  async loadRooms() {
+  async loadRooms(userId: string) {
     try {
-      const { data: rooms, error: roomError } = await supabase
+      const { data: rooms, error: roomsFetchError } = await supabase
         .from("Rooms")
-        .select("channel_id");
+        .select("channel_id")
+        .eq("channel_creater", userId);
 
-      if (roomError) {
-        console.log("Error fetching rooms: ", roomError.message);
-        return { success: false, data: null, error: roomError.message };
+      if (roomsFetchError) {
+        console.log("Error fetching rooms: ", roomsFetchError.message);
+        return { success: false, data: null, error: roomsFetchError.message };
       }
 
-      const { data: roomParticipants, error: errorRoomParticipants } =
+      const channelIds = rooms.map((room) => room.channel_id);
+
+      const { data: roomParticipants, error: roomParticipantsError } =
         await supabase
           .from("RoomParticipants")
-          .select("user_id,user_email,user_name");
+          .select("user_id, user_email, user_name")
+          .in("channel_id", channelIds);
 
-      if (errorRoomParticipants) {
+      if (roomParticipantsError) {
         console.log(
           "Error fetching room participants: ",
-          errorRoomParticipants.message,
+          roomParticipantsError.message,
         );
+
         return {
           success: false,
           data: null,
-          error: errorRoomParticipants.message,
+          error: roomParticipantsError.message,
         };
       }
 
-      return { success: true, data: { rooms, roomParticipants }, error: null };
+      const data = rooms.map((room) => ({
+        channel_id: room.channel_id,
+        participants: roomParticipants.map((p) => ({
+          user_id: p.user_id,
+          user_email: p.user_email,
+          user_name: p.user_name,
+        })),
+      }));
+
+      return { success: true, data: data, error: null };
     } catch (e) {
       console.error("Error occured while fetching rooms: ", e);
       return { success: false, data: null, error: e };
