@@ -136,7 +136,7 @@ class ChannelService {
     }
   }
 
-  subscribeToRoomsTable(onNewRoom: (payload: any) => void) {
+  subscribeToRoomsTable(userId: string, onNewRoom: (payload: any) => void) {
     try {
       const subToRooms = supabase
         .channel("table_db_changes")
@@ -146,6 +146,7 @@ class ChannelService {
             event: "INSERT",
             schema: "public",
             table: "Rooms",
+            filter: `channel_creater=eq.${userId}`
           },
           (payload) => {
             onNewRoom(payload.new);

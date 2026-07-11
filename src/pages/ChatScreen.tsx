@@ -15,11 +15,15 @@ import ChatCardSearch from "../components/ChatCardSearch";
 import type { SearchedUsers } from "../interfaces/SupabaseInterface";
 import { channelService } from "../services/ChannelService";
 import type { ChatCardProps } from "../interfaces/ComponentsInterface";
+import type { Session } from "@supabase/supabase-js";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0,
   );
+
+  //User State
+  const [userSession, setUserSession] = useState<Session | null>(null);
 
   //Chat state
   const [chats, setChats] = useState<ChatCardProps>();
@@ -85,6 +89,8 @@ const ChatScreen = () => {
             alert("You must have an account to chat");
           }
           navigate("/login", { replace: true });
+        } else {
+          setUserSession(data.session);
         }
       } catch (e: any) {
         console.error("Error: ", e);
@@ -98,7 +104,7 @@ const ChatScreen = () => {
 
   //useEffect to subscribe for when the user creates a new room
   useEffect(() => {
-    const unSub = channelService.subscribeToRoomsTable((payload) => {
+    const unSub = channelService.subscribeToRoomsTable(userSession?.user.id!, (payload) => {
       console.log("New room inserted in the 'Rooms' table", payload);
       setChatSelected(payload.channel_id);
     });
