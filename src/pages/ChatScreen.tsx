@@ -15,6 +15,7 @@ import ChatCardSearch from "../components/ChatCardSearch";
 import type { SearchedUsers } from "../interfaces/SupabaseInterface";
 import { channelService } from "../services/ChannelService";
 import type { Session } from "@supabase/supabase-js";
+import type { Chats } from "../interfaces/ComponentsInterface";
 
 const ChatScreen = () => {
   const [width, setWidth] = useState(
@@ -25,8 +26,9 @@ const ChatScreen = () => {
   const [userSession, setUserSession] = useState<Session | null>(null);
 
   //Chat state
-  const [chats, setChats] = useState({});
+  const [chats, setChats] = useState<Chats[]>([]);
   const [chatSelected, setChatSelected] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedUsers, setSearchedUsers] = useState<SearchedUsers[]>([]);
   const [userSelected, setUserSelected] = useState<SearchedUsers>();
@@ -103,8 +105,12 @@ const ChatScreen = () => {
 
   //useEffect to subscribe for when the user creates a new room
   useEffect(() => {
+    if (!userSession) return;
+
     const fetchRoomsOnChange = async () => {
       try {
+        setIsLoading(true);
+
         const { success, data, error } = await channelService.loadRooms(
           userSession?.user.id!,
         );
@@ -115,6 +121,8 @@ const ChatScreen = () => {
         }
       } catch (e) {
         console.error("Error occured in the 'ChatScreen' component: ", e);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -132,7 +140,7 @@ const ChatScreen = () => {
     return () => {
       unSub();
     };
-  }, []);
+  }, [userSession]);
 
   //Function for logging out
   const handleLogout = async () => {
@@ -158,6 +166,14 @@ const ChatScreen = () => {
   //Function for looking up user
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (inputValue.length == 0) {
+      setSearchQuery("");
+      return;
+    }
+
+    setSearchQuery(inputValue);
+
     try {
       setIsLoading(true);
 
@@ -184,6 +200,17 @@ const ChatScreen = () => {
       </div>
     );
   }
+
+  //Function for formating time
+  const formatTime = (timestamp: string): string => {
+    if (!timestamp) return "";
+
+    return new Date(timestamp).toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   if (width <= 450) {
     return <ChatScreenMobile />;
@@ -268,7 +295,7 @@ const ChatScreen = () => {
             */}
               <form className="relative mb-9" onSubmit={handleSearch}>
                 <input
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Search chat"
                   type="text"
                   className={`w-full h-[2vw] min-h-6 max-h-15 ${width < 2000 ? "pl-6" : "pl-10"} border rounded-md bg-input-light dark:bg-input-dark placeholder:text-[clamp(1.1rem,1.1vw,3rem)] placeholder:text-black`}
@@ -296,28 +323,51 @@ const ChatScreen = () => {
                   </div>
                 ) : (
                   <>
-                    {searchedUsers.length == 0 &&
-                    hasSearched.current == true ? (
-                      <p className="flex justify-center text-[clamp(16px,1.8vw,180px)] text-text-light dark:text-text-dark">
-                        No Matches Found
-                      </p>
+                    {/* 
+                  
+                  This part of the chat screen checks if the user searched for another user
+                  if no then this part will display the users past rooms
+                  
+                  */}
+                    {searchQuery ? (
+                      <>
+                        {searchedUsers.length == 0 &&
+                        hasSearched.current == true ? (
+                          <p className="flex justify-center text-[clamp(16px,1.8vw,180px)] text-text-light dark:text-text-dark">
+                            No Matches Found
+                          </p>
+                        ) : (
+                          searchedUsers.map((user, index) => (
+                            <div
+                              key={index}
+                              onClick={() => {
+                                setUserSelected(user);
+                              }}
+                            >
+                              <ChatCardSearch
+                                userName={
+                                  user.user_name != null
+                                    ? user.user_name
+                                    : user.user_email
+                                }
+                              />
+                            </div>
+                          ))
+                        )}
+                      </>
                     ) : (
-                      searchedUsers.map((user, index) => (
-                        <div
-                          key={index}
-                          onClick={() => {
-                            setUserSelected(user);
-                          }}
-                        >
-                          <ChatCardSearch
-                            userName={
-                              user.user_name != null
-                                ? user.user_name
-                                : user.user_email
-                            }
-                          />
-                        </div>
-                      ))
+                      <div className="">
+                        {chats.map((room, index) => (
+                          <div key={room.channel_id} className="">
+                            <ChatCard
+                              chatterAvatarURL={null}
+                              chatterEmail={room.participants[index].user_email}
+                              chatterLastMessage={room.lastMessage}
+                              lastMessageTime={formatTime(room.lastMessageTime)}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </>
                 )}

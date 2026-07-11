@@ -1,9 +1,16 @@
 import type { SearchedUsers } from "./SupabaseInterface";
 
+export interface Chats {
+    channel_id: string,
+    participants: SearchedUsers[],
+    lastMessage: string,
+    lastMessageTime: string,
+}
+
 export interface ChatCardProps{
-    roomId: string;
-    chatterAvatarURL: string;
-    chatterName: string;
+    chatterAvatarURL: string | null;
+    chatterName?: string | null;
+    chatterEmail: string;
     chatterLastMessage: string;
     lastMessageTime: string; //string for now
 }

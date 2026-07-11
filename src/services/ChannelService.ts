@@ -198,7 +198,7 @@ class ChannelService {
 
       const { data: LastMessage, error: LastMessageError } = await supabase
         .from("ChatMessages")
-        .select("channel_id, message")
+        .select("channel_id, message, sent_at")
         .in("channel_id", channelIds)
         .order("sent_at", { ascending: false });
 
@@ -216,6 +216,9 @@ class ChannelService {
         })),
         lastMessage:
           LastMessage.find((m) => m.channel_id === room.channel_id)?.message ??
+          null,
+        lastMessageTime:
+          LastMessage.find((m) => m.channel_id === room.channel_id)?.sent_at ??
           null,
       }));
 
