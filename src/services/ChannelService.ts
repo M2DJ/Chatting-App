@@ -196,6 +196,17 @@ class ChannelService {
         };
       }
 
+      const { data: LastMessage, error: LastMessageError } = await supabase
+        .from("ChatMessages")
+        .select("channel_id, message")
+        .in("channel_id", channelIds)
+        .order("sent_at", { ascending: false });
+
+      if (LastMessageError) {
+        console.log("Error fetching last messages: ", LastMessageError.message);
+        return { success: false, data: null, error: LastMessageError.message };
+      }
+
       const data = rooms.map((room) => ({
         channel_id: room.channel_id,
         participants: roomParticipants.map((p) => ({
@@ -203,6 +214,9 @@ class ChannelService {
           user_email: p.user_email,
           user_name: p.user_name,
         })),
+        lastMessage:
+          LastMessage.find((m) => m.channel_id === room.channel_id)?.message ??
+          null,
       }));
 
       return { success: true, data: data, error: null };
