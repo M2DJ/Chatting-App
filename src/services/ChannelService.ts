@@ -165,7 +165,8 @@ class ChannelService {
 
   async loadRooms(userId: string) {
     try {
-      const { data: rooms, error: roomsFetchError } = await supabase
+      //#1 Fetch the rooms the user has created
+      const { data: createdRooms, error: roomsFetchError } = await supabase
         .from("Rooms")
         .select("channel_id")
         .eq("channel_creater", userId);
@@ -175,54 +176,77 @@ class ChannelService {
         return { success: false, data: null, error: roomsFetchError.message };
       }
 
-      const channelIds = rooms.map((room) => room.channel_id);
-
-      const { data: roomParticipants, error: roomParticipantsError } =
+      //#2 Fetch the rooms the user is a participant in
+      const { data: participatedRooms, error: participatedRoomsError } =
         await supabase
           .from("RoomParticipants")
-          .select("user_id, user_email, user_name")
-          .in("channel_id", channelIds);
+          .select("channel_id")
+          .eq("user_id", userId);
 
-      if (roomParticipantsError) {
+      if (participatedRoomsError) {
         console.log(
-          "Error fetching room participants: ",
-          roomParticipantsError.message,
+          "Error fetching participated rooms: ",
+          participatedRoomsError.message,
         );
-
         return {
           success: false,
           data: null,
-          error: roomParticipantsError.message,
+          error: participatedRoomsError.message,
         };
       }
 
-      const { data: LastMessage, error: LastMessageError } = await supabase
+      //#3 merging both sets and removing duplication
+      const createdIds = createdRooms.map((r) => r.channel_id);
+      const participatedIds = participatedRooms.map((r) => r.channel_id);
+      const channelIds = [...new Set([...createdIds, ...participatedIds])];
+
+      if (channelIds.length === 0) {
+        return { success: true, data: [], error: null };
+      }
+
+      //#4 Fetch participants for the rooms
+      const { data: roomParticipants, error: roomParticipantError } =
+        await supabase
+          .from("RoomParticipants")
+          .select("channel_id, user_id, user_email, user_name")
+          .in("channel_id", channelIds);
+
+      if (roomParticipantError) {
+        console.log(
+          "Error fetching room participants: ",
+          roomParticipantError.message,
+        );
+        return {
+          success: false,
+          data: null,
+          error: roomParticipantError.message,
+        };
+      }
+
+      //#5 Fetch the last messages for all the rooms fetched
+      const { data: lastMessages, error: lastMessagesError } = await supabase
         .from("ChatMessages")
         .select("channel_id, message, sent_at")
         .in("channel_id", channelIds)
         .order("sent_at", { ascending: false });
 
-      if (LastMessageError) {
-        console.log("Error fetching last messages: ", LastMessageError.message);
-        return { success: false, data: null, error: LastMessageError.message };
+      if (lastMessagesError) {
+        console.log(
+          "Error fetching last messages: ",
+          lastMessagesError.message,
+        );
+        return { success: false, data: null, error: lastMessagesError.message };
       }
 
-      const data = rooms.map((room) => ({
-        channel_id: room.channel_id,
-        participants: roomParticipants.map((p) => ({
-          user_id: p.user_id,
-          user_email: p.user_email,
-          user_name: p.user_name,
-        })),
-        lastMessage:
-          LastMessage.find((m) => m.channel_id === room.channel_id)?.message ??
-          null,
-        lastMessageTime:
-          LastMessage.find((m) => m.channel_id === room.channel_id)?.sent_at ??
-          null,
+      //#6 put everything together in an array
+      const data = channelIds.map((channelId) => ({
+        channel_id: channelId,
+        participants: roomParticipants.filter(p => p.channel_id === channelId),
+        lastMessage: lastMessages.find(m => m.channel_id === channelId)?.message ?? null,
+        lastMessageTime: lastMessages.find(m => m.channel_id === channelId)?.sent_at ?? null
       }));
 
-      return { success: true, data: data, error: null };
+      return { success: true, data: data, error: null}
     } catch (e) {
       console.error("Error occured while fetching rooms: ", e);
       return { success: false, data: null, error: e };
