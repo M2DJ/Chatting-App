@@ -57,6 +57,7 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
       try {
         const { error } = await channelService.createRoom(
           user?.user.id!,
+          user?.user.email!,
           participant?.user_id!,
           participant?.user_email!,
           user?.user.id!,

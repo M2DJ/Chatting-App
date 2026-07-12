@@ -70,10 +70,12 @@ class ChannelService {
   //This function takes the user id from Supabase
   async createRoom(
     roomCreator: string,
+    roomCreatorEmail: string,
     participantId: string,
     participantEmail: string,
     senderId: string,
     message: string,
+    roomCreaterName?: string,
     roomName?: string,
   ) {
     try {
@@ -82,6 +84,8 @@ class ChannelService {
         .insert({
           channel_creater: roomCreator,
           channel_name: roomName ?? null,
+          channel_creater_email: roomCreatorEmail,
+          channel_creater_name: roomCreaterName ?? null,
         })
         .select();
 
@@ -195,7 +199,7 @@ class ChannelService {
         };
       }
 
-      //#3 merging both sets and removing duplication
+      //#3 Merge both sets and remove duplicates
       const createdIds = createdRooms.map((r) => r.channel_id);
       const participatedIds = participatedRooms.map((r) => r.channel_id);
       const channelIds = [...new Set([...createdIds, ...participatedIds])];
@@ -204,12 +208,13 @@ class ChannelService {
         return { success: true, data: [], error: null };
       }
 
-      //#4 Fetch participants for the rooms
+      //#4 Fetch other participants for all rooms (excluding current user)
       const { data: roomParticipants, error: roomParticipantError } =
         await supabase
           .from("RoomParticipants")
           .select("channel_id, user_id, user_email, user_name")
-          .in("channel_id", channelIds);
+          .in("channel_id", channelIds)
+          .neq("user_id", userId);
 
       if (roomParticipantError) {
         console.log(
@@ -223,7 +228,24 @@ class ChannelService {
         };
       }
 
-      //#5 Fetch the last messages for all the rooms fetched
+      //#5 Fetch room creator info for rooms the current user didn't create
+      const { data: roomCreators, error: roomCreatorsError } = await supabase
+        .from("Rooms")
+        .select(
+          "channel_id, channel_creater, channel_creater_name, channel_creater_email",
+        )
+        .in("channel_id", channelIds)
+        .neq("channel_creater", userId);
+
+      if (roomCreatorsError) {
+        console.log(
+          "Error fetching room creators info: ",
+          roomCreatorsError.message,
+        );
+        return { success: false, data: null, error: roomCreatorsError.message };
+      }
+
+      //#6 Fetch last messages for all rooms
       const { data: lastMessages, error: lastMessagesError } = await supabase
         .from("ChatMessages")
         .select("channel_id, message, sent_at")
@@ -238,17 +260,53 @@ class ChannelService {
         return { success: false, data: null, error: lastMessagesError.message };
       }
 
-      //#6 put everything together in an array
-      const data = channelIds.map((channelId) => ({
-        channel_id: channelId,
-        participants: roomParticipants.filter(p => p.channel_id === channelId),
-        lastMessage: lastMessages.find(m => m.channel_id === channelId)?.message ?? null,
-        lastMessageTime: lastMessages.find(m => m.channel_id === channelId)?.sent_at ?? null
-      }));
+      //#7 Put everything together
+      const data = channelIds.map((channelId) => {
+        // Check if there are other participants in this room (excluding current user)
+        const otherParticipants = roomParticipants.filter(
+          (p) => p.channel_id === channelId,
+        );
 
-      return { success: true, data: data, error: null}
+        // Check if there's a creator for this room (only exists for rooms current user didn't create)
+        const roomCreator = roomCreators.find(
+          (c) => c.channel_id === channelId,
+        );
+
+        // Determine who the "other person" is:
+        // - If there are other participants → use the first one (rooms current user created)
+        // - If no other participants but there's a creator → use the creator (rooms current user joined)
+        // - Otherwise → null (edge case, no other person found)
+        const otherPerson =
+          otherParticipants.length > 0
+            ? {
+                user_id: otherParticipants[0].user_id,
+                user_name: otherParticipants[0].user_name,
+                user_email: otherParticipants[0].user_email,
+              }
+            : roomCreator
+              ? {
+                  user_id: roomCreator.channel_creater,
+                  user_name: roomCreator.channel_creater_name,
+                  user_email: roomCreator.channel_creater_email,
+                }
+              : null;
+
+        return {
+          channel_id: channelId,
+          otherPerson,
+          participants: otherParticipants,
+          lastMessage:
+            lastMessages.find((m) => m.channel_id === channelId)?.message ??
+            null,
+          lastMessageTime:
+            lastMessages.find((m) => m.channel_id === channelId)?.sent_at ??
+            null,
+        };
+      });
+
+      return { success: true, data, error: null };
     } catch (e) {
-      console.error("Error occured while fetching rooms: ", e);
+      console.error("Error occurred while fetching rooms: ", e);
       return { success: false, data: null, error: e };
     }
   }

@@ -133,6 +133,7 @@ const ChatScreen = () => {
       (payload) => {
         console.log("New room inserted in the 'Rooms' table", payload);
         setChatSelected(payload.channel_id);
+        setSearchQuery("");
         fetchRoomsOnChange();
       },
     );
@@ -342,6 +343,7 @@ const ChatScreen = () => {
                               key={index}
                               onClick={() => {
                                 setUserSelected(user);
+                                setChatSelected('1');
                               }}
                             >
                               <ChatCardSearch
@@ -357,11 +359,11 @@ const ChatScreen = () => {
                       </>
                     ) : (
                       <div className="">
-                        {chats.map((room, index) => (
+                        {chats.map(( room ) => (
                           <div key={room.channel_id} className="">
                             <ChatCard
                               chatterAvatarURL={null}
-                              chatterEmail={room.participants[index].user_email}
+                              chatterEmail={room.otherPerson?.user_email ?? ""}
                               chatterLastMessage={room.lastMessage}
                               lastMessageTime={formatTime(room.lastMessageTime)}
                             />
