@@ -133,8 +133,8 @@ const ChatScreen = () => {
       (payload) => {
         console.log("New room inserted in the 'Rooms' table", payload);
         setChatSelected(payload.channel_id);
-        setSearchQuery("");
         fetchRoomsOnChange();
+        setInputValue("");
       },
     );
 
