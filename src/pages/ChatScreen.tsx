@@ -360,7 +360,14 @@ const ChatScreen = () => {
                     ) : (
                       <div className="">
                         {chats.map((room, index) => (
-                          <div key={room.channel_id} className="mb-5">
+                          <div
+                            key={room.channel_id}
+                            onClick={() => {
+                              setChatSelected(room.channel_id);
+                              setUserSelected(room.otherPerson!);
+                            }}
+                            className="mb-5"
+                          >
                             <ChatCard
                               chatterAvatarURL={null}
                               chatterEmail={room.otherPerson?.user_email ?? ""}
