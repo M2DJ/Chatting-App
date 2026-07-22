@@ -343,7 +343,7 @@ const ChatScreen = () => {
                               key={index}
                               onClick={() => {
                                 setUserSelected(user);
-                                setChatSelected('1');
+                                setChatSelected("1");
                               }}
                             >
                               <ChatCardSearch
@@ -359,14 +359,18 @@ const ChatScreen = () => {
                       </>
                     ) : (
                       <div className="">
-                        {chats.map(( room ) => (
-                          <div key={room.channel_id} className="">
+                        {chats.map((room, index) => (
+                          <div key={room.channel_id} className="mb-5">
                             <ChatCard
                               chatterAvatarURL={null}
                               chatterEmail={room.otherPerson?.user_email ?? ""}
                               chatterLastMessage={room.lastMessage}
                               lastMessageTime={formatTime(room.lastMessageTime)}
                             />
+
+                            {index !== chats.length - 1 && (
+                              <div className="w-full mt-4 border border-black/55 dark:border-[#AEAEAE]/55" />
+                            )}
                           </div>
                         ))}
                       </div>
