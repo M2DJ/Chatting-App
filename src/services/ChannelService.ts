@@ -318,6 +318,10 @@ class ChannelService {
           .from("Rooms")
           .select("channel_id")
           .eq("channel_creater", userId);
+      
+          if(userCreatedRooms?.length == 0) {
+            return { success: true, data: [], error: null};
+          }
 
       if (userCreatedRoomsError) {
         console.log(
