@@ -5,6 +5,7 @@ import { IoPerson, IoSend, IoChevronBack } from "react-icons/io5";
 import { channelService } from "../services/ChannelService";
 import { authService } from "../services/AuthService";
 import type { Session } from "@supabase/supabase-js";
+import { supabase } from "../services/SupabaseClient";
 
 const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   const [width, setWidth] = useState(
@@ -45,6 +46,34 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
     getUser();
   }, []);
 
+  //useEffect for the channel creation and connection
+  useEffect(() => {
+    const choosenRoom = supabase.channel(room, {
+      config: {
+        presence: {
+          key: user?.user.id,
+        },
+      },
+    });
+
+    choosenRoom.on("broadcast", { event: "message" }, (payload) => {
+      setNewMessage((prevMessages) => [...prevMessages, payload.payload]);
+    });
+
+    choosenRoom.subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        await choosenRoom.track({
+          id: user?.user.id,
+        });
+      }
+    });
+
+    return () => {
+      choosenRoom.unsubscribe();
+    };
+  }, [room, user]);
+
+  //Function that handles sending the first message and the messages after and saving them
   const handleSendingMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -53,6 +82,13 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
 
     setNewMessage((prevMessages) => [...prevMessages, newestMessage]);
 
+    /*
+    
+    Check if its the first time sending a message to this person
+    if yes: create room
+    if no: save message to the room already created
+    
+    */
     if (hasSentMessage.current) {
       try {
         const { error } = await channelService.createRoom(
@@ -181,7 +217,11 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
           </div>
         </div>
 
-        {/* Input message part */}
+        {/* 
+        
+        Input message part 
+        
+        */}
         <div className="">
           <form
             className="flex justify-center items-center"
