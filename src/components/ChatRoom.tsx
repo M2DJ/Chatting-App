@@ -28,6 +28,7 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   const [user, setUser] = useState<Session | null>(null);
 
   const hasSentMessage = useRef(false);
+  const hasRoomBeenCreated = useRef(false);
 
   //useEffect for getting the user session
   useEffect(() => {
@@ -89,24 +90,79 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
     if no: save message to the room already created
     
     */
-    if (hasSentMessage.current) {
+    if (!hasRoomBeenCreated.current) {
       try {
-        const { error } = await channelService.createRoom(
+        const { success } =
+          await channelService.checkIfUserHasRoomWithParticipant(
+            user?.user.id!,
+          );
+        if (success) {
+          hasRoomBeenCreated.current = true;
+
+          try {
+            const { error } = await channelService.saveMessage(
+              room,
+              user?.user.id!,
+              inputValue,
+            );
+
+            if (error) {
+              console.error(
+                'Failed to save message in "ChatRoom" file: ',
+                error,
+              );
+
+              return;
+            }
+          } catch (e) {
+            console.error('Failed to save message in "ChatRoom" file: ', e);
+
+            return;
+          }
+        } else {
+          try {
+            const { error } = await channelService.createRoom(
+              user?.user.id!,
+              user?.user.email!,
+              participant?.user_id!,
+              participant?.user_email!,
+              user?.user.id!,
+              newestMessage,
+            );
+
+            if (error) {
+              console.error(
+                "Error occured in the 'ChatRoom' component: ",
+                error,
+              );
+            }
+
+            console.log("Message saved successfuly");
+          } catch (e) {
+            console.error('Error creating room in "ChatRoom" component: ', e);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch room in "ChatRoom" file: ', e);
+        return;
+      }
+    } else {
+      try {
+        const { error } = await channelService.saveMessage(
+          room,
           user?.user.id!,
-          user?.user.email!,
-          participant?.user_id!,
-          participant?.user_email!,
-          user?.user.id!,
-          newestMessage,
+          inputValue,
         );
 
         if (error) {
-          console.error("Error occured in the 'ChatRoom' component: ", error);
-        }
+          console.error('Failed to save message in "ChatRoom" file: ', error);
 
-        console.log("Message saved successfuly");
+          return;
+        }
       } catch (e) {
-        console.error('Error creating room in "ChatRoom" component: ', e);
+        console.error('Failed to save message in "ChatRoom" file: ', e);
+
+        return;
       }
     }
 
@@ -230,7 +286,6 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
             <input
               value={inputValue}
               onChange={(e) => {
-                hasSentMessage.current = true;
                 setInputValue(e.target.value);
               }}
               type="text"

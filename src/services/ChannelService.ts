@@ -318,10 +318,6 @@ class ChannelService {
           .from("Rooms")
           .select("channel_id")
           .eq("channel_creater", userId);
-      
-          if(userCreatedRooms?.length == 0) {
-            return { success: true, data: [], error: null};
-          }
 
       if (userCreatedRoomsError) {
         console.log(
@@ -329,23 +325,29 @@ class ChannelService {
           userCreatedRooms,
         );
         return { success: false, data: null, error: userCreatedRoomsError };
-      } else {
-        const { data: roomParticipants, error } = await supabase
-          .from("RoomParticipants")
-          .select("user_id")
-          .eq("channel_id", userCreatedRooms);
-
-        if (error) {
-          console.error(
-            'Error fetching participants from "RoomParticipants" table: ',
-            error,
-          );
-
-          return { success: false, data: null, error: error };
-        }
-
-        return { success: true, data: roomParticipants, error: null };
       }
+
+      if (userCreatedRooms?.length == 0) {
+        return { success: false, data: [], error: null };
+      }
+
+      const channelIds = userCreatedRooms.map(r => r.channel_id);
+
+      const { data: roomParticipants, error } = await supabase
+        .from("RoomParticipants")
+        .select("user_id")
+        .in("channel_id", channelIds);
+
+      if (error) {
+        console.error(
+          'Error fetching participants from "RoomParticipants" table: ',
+          error,
+        );
+
+        return { success: false, data: null, error: error };
+      }
+
+      return { success: true, data: roomParticipants, error: null };
     } catch (e) {
       console.error(
         'Error fetching user rooms from "checkIfUserHasRoomWithParticipant" function: ',
