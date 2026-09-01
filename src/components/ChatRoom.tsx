@@ -92,11 +92,11 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
     */
     if (!hasRoomBeenCreated.current) {
       try {
-        const { success } =
+        const { success, data } =
           await channelService.checkIfUserHasRoomWithParticipant(
             user?.user.id!,
           );
-        if (success) {
+        if (success && data?.some((p) => p.user_id === participant?.user_id)) {
           hasRoomBeenCreated.current = true;
 
           try {
@@ -111,8 +111,7 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
                 'Failed to save message in "ChatRoom" file: ',
                 error,
               );
-
-              return;
+              
             }
           } catch (e) {
             console.error('Failed to save message in "ChatRoom" file: ', e);
@@ -136,6 +135,7 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
                 error,
               );
             }
+            
 
             console.log("Message saved successfuly");
           } catch (e) {
