@@ -78,91 +78,62 @@ const ChatRoom = ({ room, participant, onClick }: ChatRoomProps) => {
   const handleSendingMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let newestMessage = inputValue.trim();
+    const newestMessage = inputValue.trim();
     if (!newestMessage) return;
 
     setNewMessage((prevMessages) => [...prevMessages, newestMessage]);
 
-    /*
-    
-    Check if its the first time sending a message to this person
-    if yes: create room
-    if no: save message to the room already created
-    
-    */
     if (!hasRoomBeenCreated.current) {
       try {
         const { success, data } =
           await channelService.checkIfUserHasRoomWithParticipant(
             user?.user.id!,
           );
+
         if (success && data?.some((p) => p.user_id === participant?.user_id)) {
+          // Room already exists
           hasRoomBeenCreated.current = true;
 
-          try {
-            const { error } = await channelService.saveMessage(
-              room,
-              user?.user.id!,
-              inputValue,
-            );
+          // Broadcast immediately since room is real
+          supabase.channel(room).send({
+            type: "broadcast",
+            event: "message",
+            payload: { message: newestMessage },
+          });
 
-            if (error) {
-              console.error(
-                'Failed to save message in "ChatRoom" file: ',
-                error,
-              );
-              
-            }
-          } catch (e) {
-            console.error('Failed to save message in "ChatRoom" file: ', e);
+          await channelService.saveMessage(room, user?.user.id!, newestMessage);
+        } else {
+          // First message — create the room
+          const { error } = await channelService.createRoom(
+            user?.user.id!,
+            user?.user.email!,
+            participant?.user_id!,
+            participant?.user_email!,
+            user?.user.id!,
+            newestMessage,
+          );
 
+          if (error) {
+            console.error("Error creating room: ", error);
             return;
           }
-        } else {
-          try {
-            const { error } = await channelService.createRoom(
-              user?.user.id!,
-              user?.user.email!,
-              participant?.user_id!,
-              participant?.user_email!,
-              user?.user.id!,
-              newestMessage,
-            );
 
-            if (error) {
-              console.error(
-                "Error occured in the 'ChatRoom' component: ",
-                error,
-              );
-            }
-            
-
-            console.log("Message saved successfuly");
-          } catch (e) {
-            console.error('Error creating room in "ChatRoom" component: ', e);
-          }
+          hasRoomBeenCreated.current = true;
         }
       } catch (e) {
-        console.error('Failed to fetch room in "ChatRoom" file: ', e);
-        return;
+        console.error('Failed in "ChatRoom" handleSendingMessage: ', e);
       }
     } else {
       try {
-        const { error } = await channelService.saveMessage(
-          room,
-          user?.user.id!,
-          inputValue,
-        );
+        supabase.channel(room).send({
+          type: "broadcast",
+          event: "message",
+          payload: { message: newestMessage },
+        });
 
-        if (error) {
-          console.error('Failed to save message in "ChatRoom" file: ', error);
-
-          return;
-        }
+        await channelService.saveMessage(room, user?.user.id!, newestMessage);
       } catch (e) {
-        console.error('Failed to save message in "ChatRoom" file: ', e);
-
-        return;
+        console.error('Failed to save message in "ChatRoom": ', e);
       }
     }
 
