@@ -311,6 +311,28 @@ class ChannelService {
     }
   }
 
+  async loadRoomMessages(room: string) {
+    try {
+      const { data, error } = await supabase
+        .from("ChatMessages")
+        .select("*")
+        .eq("channel_id", room);
+
+      if (error) {
+        console.error(
+          'Error fetching messages from "ChatMessages" table: ',
+          error,
+        );
+        return { success: false, data: null, error: error };
+      }
+
+      return { success: true, data: data, error: error };
+    } catch (e) {
+      console.error("Error fetching messages: ", e);
+      return { success: false, data: null, error: e };
+    }
+  }
+
   async checkIfUserHasRoomWithParticipant(userId: string) {
     try {
       const { data: userCreatedRooms, error: userCreatedRoomsError } =
@@ -331,7 +353,7 @@ class ChannelService {
         return { success: false, data: [], error: null };
       }
 
-      const channelIds = userCreatedRooms.map(r => r.channel_id);
+      const channelIds = userCreatedRooms.map((r) => r.channel_id);
 
       const { data: roomParticipants, error } = await supabase
         .from("RoomParticipants")
